@@ -1,4 +1,4 @@
-FROM node:6-apline
+FROM node:6-alpine
 EXPOSE 3000
 RUN apk add --update tini
 RUN mkdir -p /usr/src/app
