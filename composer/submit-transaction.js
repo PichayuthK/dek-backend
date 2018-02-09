@@ -24,70 +24,52 @@
  */
 
 const config = require('./../config/config.js');
-
-
- // Constant values - change as per your needs
- const namespace = config.namespace;
- const transactionType = config.transactionAddNewCard;
-
-// 1. Connect to airlinev7
 const bnUtil = require('./admin-connection');
-bnUtil.connect(main);
 
-function main(error){
-    
+// Constant values - change as per your needs
+const namespace = config.namespace;
+const transactionType = config.transactionAddNewCard;
+const uuid = require('uuid/v1');
+
+
+
+bnUtil.connect(addNewCard);
+
+function addNewCard(card, error) {
+    console.log('Invoke addNewCard function');
     var newCard = {
-        participantId: '1',
-        issuedCompany: 'PTT',
-        point: 1000,
-        uuid: '1'
+        participantId: card.participantId,
+        issuedCompany: card.issuedCompany,
+        point: card.point,
+        uuid: uuid()
     };
 
-    // Check for error
-    if(error){
+    if (error) {
+        console.log('--- error ----');
         console.log(error);
         process.exit(1);
     }
 
-    // 2. Get the Business Network Definition
-    let bnDef =  bnUtil.connection.getBusinessNetwork();
-    console.log("2. Received Definition from Runtime: ",
-                   bnDef.getName(),"  ",bnDef.getVersion());
-
-    // 3. Get the factory
-    let factory = bnDef.getFactory();
+    let bnDef = bnUtil.connection.getBusinessNetwork();
     
-    // 4. Lets create a new Resource of type = Transaction
-    //    Here is the sample data
-    // {
-    //     "$class": "org.acme.airline.flight.CreateFlight",
-    //     "flightNumber": "AE101-06-06-2018",
-    //     "origin": "MSP",
-    //     "destination": "SEA",
-    //     "schedule": "2018-06-06T18:49:58.273Z"
-    // }
+    console.log("Received Definition from Runtime: ",
+        bnDef.getName(), "  ", bnDef.getVersion());
 
-    // 4. Create an instance of transaction
-    let options = {
-        generate: false,
-        includeOptionalFields: false
-    }
+    let factory = bnDef.getFactory();
 
     let transaction = factory.newTransaction(namespace, transactionType);
 
-    // 5. Set up the properties of the transaction object
-    transaction.setPropertyValue('participantId',newCard.participantId);
+    transaction.setPropertyValue('participantId', newCard.participantId);
     transaction.setPropertyValue('issuedCompany', newCard.issuedCompany);
-    transaction.setPropertyValue('point' , newCard.point);
-    transaction.setPropertyValue('uuid' , newCard.uuid);
+    transaction.setPropertyValue('point', newCard.point);
+    transaction.setPropertyValue('uuid', newCard.uuid);
 
-    // 6. Submit the transaction
-    return bnUtil.connection.submitTransaction(transaction).then(()=>{
-        console.log("6. Transaction Submitted/Processed Successfully!!")
+    return bnUtil.connection.submitTransaction(transaction).then(() => {
+        console.log("Transaction Submitted/Processed Successfully!!")
 
         bnUtil.disconnect();
 
-    }).catch((error)=>{
+    }).catch((error) => {
         console.log(error);
 
         bnUtil.disconnect();
@@ -96,27 +78,21 @@ function main(error){
 
 
 
+// function main(error) {
 
-/**
- * Test Data for adding flight in registry
- {
-  "$class": "org.acme.airline.flight.Flight",
-  "flightId": "AE101-05-05-2018",
-  "flightNumber": "AE101",
-  "route": {
-    "$class": "org.acme.airline.flight.Route",
-    "origin": "ATL",
-    "destination": "EWR",
-    "schedule": "2017-12-17T18:49:58.288Z",
-    "id": "string"
-  }
-}
-* Adding flight using the createFlight transaction
-{
-  "$class": "org.acme.airline.flight.CreateFlight",
-  "flightNumber": "AE101-06-06-2018",
-  "origin": "MSP",
-  "destination": "SEA",
-  "schedule": "2018-06-06T18:49:58.273Z"
-}
-*/
+//     if (error) {
+//         console.log(error);
+//         process.exit(1);
+//     }
+
+//     return bnUtil.connection.submitTransaction(transaction).then(() => {
+//         console.log("6. Transaction Submitted/Processed Successfully!!")
+
+//         bnUtil.disconnect();
+
+//     }).catch((error) => {
+//         console.log(error);
+
+//         bnUtil.disconnect();
+//     });
+// }

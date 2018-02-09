@@ -31,17 +31,19 @@
     connection: {},
 
     // 1. This is the function that is called by the app
-    connect : function(callback) {
+    connect : function(callback, param_1) {
 
         // Create instance of file system card store
+        console.log('connect function');
         const cardStore = new this.cardStore();
         this.connection = new this.BusinessNetworkConnection({ cardStore: cardStore });
 
         // Invoke connect
         return this.connection.connect(this.cardName).then(function(){
-            callback();
+            callback(param_1);
         }).catch((error)=>{
-            callback(error);
+            console.log('connect error ');
+            callback(param_1, error);
         });
     },
 
