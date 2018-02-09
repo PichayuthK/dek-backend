@@ -9,6 +9,6 @@ app.get('/', (req, res) => {
     res.send('Hello express');
 });
 
-app.listen(3333, () => {
-    console.log('Started on port 3333');
+app.listen(3000, () => {
+    console.log('Started on port 3000');
 });

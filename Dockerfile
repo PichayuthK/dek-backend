@@ -6,4 +6,4 @@ WORKDIR /usr/src/app
 COPY package.json package.json
 RUN npm install && npm cache clean
 COPY . .
-CMD ["npm","start"]
+CMD ["tini","--","node","./server/server.js"]
