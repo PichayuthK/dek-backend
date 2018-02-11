@@ -11,9 +11,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "uuid": "^3.2.1"
-  },
-  "devDependencies": {
+    "uuid": "^3.2.1",
     "composer-admin": "latest",
     "composer-client": "latest",
     "composer-common": "latest",
