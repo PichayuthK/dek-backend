@@ -6,24 +6,24 @@ var cardStore = require('composer-common').FileSystemCardStore;
 var BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 
 const namespace = config.namespace;
-const transactionType = config.transactionAddNewCard;
+const transactionType = config.transactionAddNewUser;
 var cardName = config.cardName;
 const myCardStore = new cardStore();
 var connection = new BusinessNetworkConnection({
     cardStore: myCardStore
 });
-// bnUtil.connect(addNewCard);
+// bnUtil.connect(addNewUser);
 
-addNewCard({
-    participantId: '1',
-    issuedCompany: 'PTT',
-    point: 999,
+addNewUser({
+    lastName: 'Kitti',
+    citizenId: '11034',
+    firstName: 'Peace',
     uuid:uuid()
 });
 
-function addNewCard(newCard, error) {
-    console.log('Invoke addNewCard function');
-
+function addNewUser(newCard, error) {
+    console.log('Invoke addNewUser function');
+    console.log(newCard);
     if (error) {
         console.log('--- error ----');
         console.log(error);
@@ -43,9 +43,9 @@ function addNewCard(newCard, error) {
 
         let transaction = factory.newTransaction(namespace, transactionType);
 
-        transaction.setPropertyValue('participantId', newCard.participantId);
-        transaction.setPropertyValue('issuedCompany', newCard.issuedCompany);
-        transaction.setPropertyValue('point', newCard.point);
+        transaction.setPropertyValue('lastName', newCard.lastName);
+        transaction.setPropertyValue('citizenId', newCard.citizenId);
+        transaction.setPropertyValue('firstName', newCard.firstName);
         transaction.setPropertyValue('uuid', newCard.uuid);
 
         return connection.submitTransaction(transaction).then(() => {
