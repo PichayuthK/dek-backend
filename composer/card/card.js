@@ -14,16 +14,16 @@ var connection = new BusinessNetworkConnection({
 });
 // bnUtil.connect(addNewCard);
 
-addNewCard({
-    participantId: '1',
-    issuedCompany: 'PTT',
-    point: 999,
-    uuid:uuid()
-});
+// addNewCard({
+//     participantId: '1',
+//     issuedCompany: 'PTT',
+//     point: 999,
+//     uuid:uuid()
+// });
 
-function addNewCard(newCard, error) {
+var addNewCard = function(newCard, error) {
     console.log('Invoke addNewCard function');
-
+    console.log(newCard);
     if (error) {
         console.log('--- error ----');
         console.log(error);
@@ -43,7 +43,7 @@ function addNewCard(newCard, error) {
 
         let transaction = factory.newTransaction(namespace, transactionType);
 
-        transaction.setPropertyValue('participantId', newCard.participantId);
+        transaction.setPropertyValue('userId', newCard.userId);
         transaction.setPropertyValue('issuedCompany', newCard.issuedCompany);
         transaction.setPropertyValue('point', newCard.point);
         transaction.setPropertyValue('uuid', newCard.uuid);
@@ -52,11 +52,80 @@ function addNewCard(newCard, error) {
             console.log("Transaction Submitted/Processed Successfully!!")
 
             connection.disconnect();
+            return('completed');
 
         });
     }).catch((error) => {
         console.log(error);
 
         connection.disconnect();
+        return (error);
     });
+}
+
+
+var getCard = function(userId) {
+
+    return connection.connect(cardName).then(function () {
+
+    var statement = 'SELECT  org.dek.network.User WHERE (userId == _$id)';
+
+    // #3 Build the query object
+    var query = connection.buildQuery(statement);
+
+    // #4 Execute the query
+    return connection.query(query, {id:userId}) //,{id:'CRAFT01'});
+        .then((result) => {
+            var reUser = [];
+            console.log('Received card count:', result.length);
+            if (result.length > 0) {
+                result.forEach( (u) => {
+                    reUser.push(u.cardId);
+                });
+            }
+            connection.disconnect();
+            console.log(reUser);
+            return reUser;
+        }).catch((error) => {
+            console.log(error);
+            connection.disconnect();
+            return(error);
+        });
+    });
+}
+
+var getAllCard = function(userId) {
+
+    return connection.connect(cardName).then(function () {
+
+    var statement = 'SELECT  org.dek.network.User';
+
+    // #3 Build the query object
+    var query = connection.buildQuery(statement);
+
+    // #4 Execute the query
+    return connection.query(query) //,{id:'CRAFT01'});
+        .then((result) => {
+            var reUser = [];
+            console.log('Received card count:', result.length);
+            if (result.length > 0) {
+                result.forEach( (u) => {
+                    reUser.push(u.cardId);
+                });
+            }
+            connection.disconnect();
+            console.log(reUser);
+            return reUser;
+        }).catch((error) => {
+            console.log(error);
+            connection.disconnect();
+            return(error);
+        });
+    });
+}
+
+module.exports = {
+    addNewCard,
+    getCard,
+    getAllCard
 }

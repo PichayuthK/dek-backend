@@ -14,14 +14,14 @@ var connection = new BusinessNetworkConnection({
 });
 // bnUtil.connect(addNewUser);
 
-addNewUser({
-    lastName: 'Kitti',
-    citizenId: '11034',
-    firstName: 'Peace',
-    uuid:uuid()
-});
+// addNewUser({
+//     lastName: 'Kitti',
+//     citizenId: '11034',
+//     firstName: 'Peace',
+//     uuid: uuid()
+// });
 
-function addNewUser(newCard, error) {
+var addNewUser = function(newCard, error) {
     console.log('Invoke addNewUser function');
     console.log(newCard);
     if (error) {
@@ -59,4 +59,42 @@ function addNewUser(newCard, error) {
 
         connection.disconnect();
     });
+}
+
+var getUser = function(id) {
+
+    return connection.connect(cardName).then(function () {
+
+    var statement = 'SELECT  org.dek.network.User';
+
+    // #3 Build the query object
+    var query = connection.buildQuery(statement);
+
+    // #4 Execute the query
+    return connection.query(query) //,{id:'CRAFT01'});
+        .then((result) => {
+            var reUser = [];
+            console.log('Received card count:', result.length);
+            if (result.length > 0) {
+                result.forEach( (u) => {
+                    reUser.push(u.userId);
+                });
+            }
+            connection.disconnect();
+            console.log(reUser);
+            return reUser;
+        }).catch((error) => {
+            console.log(error);
+            connection.disconnect();
+            return(error);
+        });
+    });
+}
+
+// getUser(1);
+
+
+module.exports = {
+    addNewUser,
+    getUser
 }
