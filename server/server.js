@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var user = require('./../composer/user/user.js');
 var card = require('./../composer/card/card.js');
 var uuid = require('uuid/v1');
+var {Company} = require('./../models/company.js');
 
 var app = express();
 
@@ -68,6 +69,31 @@ app.get('/createCard', (req, res) => {
         res.send(c);
     });
 
+});
+
+app.get('/createCompany', (req,res) => {
+    var company = new Company({
+        name: 'PEACE',
+        img: 'www.google.com',
+        id: uuid(),
+        termAndCondition: 'this is term and condition'
+    });
+
+    company.save().then((com) => {
+        res.send(com);
+    }, (e) => {
+        res.status(404).send(e);
+    });
+
+});
+
+app.get('/company', (req,res) => {
+    console.log('GET /company');
+    Company.find({name:'PEACE'}).then( (com) => {
+        res.send(com);
+    }, (e) => {
+        res.status(404).send(e);
+    });
 });
 
 app.listen(3333, () => {
