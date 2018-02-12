@@ -1,16 +1,18 @@
-mongo:
-  image: "mongo"
-  ports:
-    - "27017:27017"
+version: '3'
+services:
 
-node:
-  image: docker-node-express-mongoapp
-  build: .
-  command: nodemon ./server/server.js
-  volumes:
-    - ./:/usr/src/app
-    - /usr/src/app/node_modules
-  ports:
-    - "80:3333"
-  depends_on:
-    -"mongo"
+  node:
+    image: docker-node-express-mongoapp
+    build: .
+    command: node ./server/server.js
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "80:3333"
+    depends_on:
+      - "mongo"
+  mongo:
+    image: "mongo"
+    ports:
+      - "27017:27017"
