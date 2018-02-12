@@ -10,4 +10,4 @@ RUN apk --no--cache --virtual build-dependencies add \
     python \
     && npm install && npm cache clean
 COPY . .
-CMD ["tini","--","node","./server/server.js"]
+CMD ["tini","--","nodemon","./server/server.js"]
