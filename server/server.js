@@ -23,7 +23,7 @@ app.get('/user', (req, res) => {
     });
 });
 
-app.get('/vender',(req,res) =>{
+app.get('/vendor',(req,res) =>{
     // var cardList = [{
     //     name:'PTT',
     //     img:'http://www.think.co.th/vr/wp-content/uploads/2016/10/ptt.png'
