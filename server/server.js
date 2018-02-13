@@ -54,6 +54,15 @@ app.get('/vendor',(req,res) =>{
     
 });
 
+app.get('/vendor/:id', (req,res) => {
+    var id = req.params.id;
+    company.findById(id).then( (c) => {
+        return res.send(c);
+    }, (e) => {
+        return res.send(e);
+    });
+});
+
 app.get('/card', (req, res) => {
     var userId = req.params.userId;
 
@@ -84,7 +93,7 @@ app.post('/vendor', (req,res) => {
         id: uuid(),
         termAndCondition: req.params.termAndCondition
     });
-
+    console.log(company);
     company.save().then((com) => {
         res.send(com);
     }, (e) => {
