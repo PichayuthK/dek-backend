@@ -56,7 +56,7 @@ app.get('/vendor',(req,res) =>{
 
 app.get('/vendor/:id', (req,res) => {
     var id = req.params.id;
-    company.findById(id).then( (c) => {
+    Company.findById(id).then( (c) => {
         return res.send(c);
     }, (e) => {
         return res.send(e);
