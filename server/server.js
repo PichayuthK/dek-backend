@@ -87,13 +87,14 @@ app.get('/createCard', (req, res) => {
 });
 
 app.post('/vendor', (req,res) => {
+    console.log(req.body);
     var company = new Company({
-        name: req.params.name,
-        img: req.params.img,
+        name: req.body.name,
+        img: req.body.img,
         id: uuid(),
-        termAndCondition: req.params.termAndCondition
+        termAndCondition: req.body.termAndCondition
     });
-    console.log(company);
+    console.log('company: ',company);
     company.save().then((com) => {
         res.send(com);
     }, (e) => {
