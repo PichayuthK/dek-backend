@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 
 var user = require('./../composer/user/user.js');
 var card = require('./../composer/card/card.js');
+var point = require('./../composer/point/point.js');
 var uuid = require('uuid/v1');
 
 var {
@@ -107,6 +108,21 @@ app.post('/card', (req, res) => {
         res.send(c);
     });
 
+});
+
+app.post('/transferPoint', (req, res) => {
+    var point = {
+        fromCardId: req.body.fromCardId,
+        toCardId: req.body.toCardId,
+        fromPoint: req.body.fromPoint,
+        toPoint: req.body.toPoint
+    };
+
+    point.transferPoint = function(info, error) {
+        (point).then((c) => {
+        res.send(c);
+    });
+    }
 });
 
 app.post('/vendor', (req, res) => {

@@ -3,5 +3,6 @@ module.exports = {
     namespace:"org.dek.network",
     
     transactionAddNewCard: "AddNewCard",
-    transactionAddNewUser: "AddNewUser"
+    transactionAddNewUser: "AddNewUser",
+    transactionTransferPoint: "TransferPoint"
 }
