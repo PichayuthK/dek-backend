@@ -15,6 +15,10 @@ var {
 var {
     Partner
 } = require('./../models/partner.js');
+var {
+    User
+} = require('./../models/user.js');
+
 
 var app = express();
 
@@ -28,22 +32,14 @@ var newCard = ({
     userId: '2',
     issuedCompany: 'PTT',
     point: 999,
-    uuid:uuid()
+    uuid: uuid()
 });
 
-app.get('/createCard', (req,res) => {
+app.get('/createCard', (req, res) => {
     card.addNewCard(newCard);
 });
 
-app.get('/user', (req, res) => {
-    var username = req.params.username;
-    var password = req.params.password;
-    user.getUser(1).then((u) => {
-        res.send(u);
-    });
-});
-
-app.get('/vendor', (req, res) => {
+app.get('/vendors', (req, res) => {
     Company.find().then((c) => {
         res.send(c);
     }, (e) => {
@@ -52,7 +48,7 @@ app.get('/vendor', (req, res) => {
 
 });
 
-app.get('/vendor/:id', (req, res) => {
+app.get('/vendors/:id', (req, res) => {
     var id = req.params.id;
     Company.findById(id).then((c) => {
         return res.send(c);
@@ -62,27 +58,56 @@ app.get('/vendor/:id', (req, res) => {
 });
 
 // change to accept id
-app.get('/card', (req, res) => {
+app.get('/cards', (req, res) => {
     var userId = req.params.userId;
     card.getAllCard().then((c) => {
         res.send(c);
     });
 });
 
-app.get('/partner/:id', (req,res) => {
+app.get('/partners/:id', (req, res) => {
     var fromVendor = req.params.id;
     console.log('fromVendorId: ', fromVendor);
     var id = mongoose.Types.ObjectId(fromVendor);
     Partner.find({
-       
-    }).then( (p) => {
-        res.send({ p });
+
+    }).then((p) => {
+        res.send({
+            p
+        });
     }, (e) => {
         res.send(e).status(404);
     });
 });
 
-app.post('/partner', (req, res) => {
+app.post('/users', (req, res) => {
+    var newUser = new User ({
+        username: req.body.username,
+        password: req.body.password,
+        citizenId: req.body.citizenid,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        phoneNumber: req.body.phoneNumber
+    });
+    newUser.save().then((user) => {
+        res.send(user);     
+    }, (e) => {
+        res.status(404).send(e);
+    });
+});
+
+app.post('/users/login', (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+    User.findByCredentials(username, password).then((user) => {
+            res.send(user);
+    }).catch((e) => {
+        res.status(400).send();
+    });
+    // implement get card from hyperledger
+});
+
+app.post('/partners', (req, res) => {
     var newPartner = new Partner({
         fromVendorId: mongoose.Types.ObjectId(req.body.fromVendorId),
         toVendorId: mongoose.Types.ObjectId(req.body.toVendorId),
@@ -96,7 +121,7 @@ app.post('/partner', (req, res) => {
     });
 });
 
-app.post('/card', (req, res) => {
+app.post('/cards', (req, res) => {
     var newCard = {
         userId: req.body.userId,
         issuedCompany: req.body.vendorName,
@@ -118,14 +143,14 @@ app.post('/transferPoint', (req, res) => {
         toPoint: req.body.toPoint
     };
 
-    point.transferPoint = function(info, error) {
+    point.transferPoint = function (info, error) {
         (point).then((c) => {
-        res.send(c);
-    });
+            res.send(c);
+        });
     }
 });
 
-app.post('/vendor', (req, res) => {
+app.post('/vendors', (req, res) => {
     console.log(req.body);
     var company = new Company({
         name: req.body.name,
@@ -156,9 +181,11 @@ app.delete('/vendor/:id', (req, res) => {
     });
 });
 
-app.delete('/partner', (req,res) => {
-    Partner.remove({}).then( (rm) =>{
-        res.send({rm});
+app.delete('/partner', (req, res) => {
+    Partner.remove({}).then((rm) => {
+        res.send({
+            rm
+        });
     }, (e) => {
         res.send(e);
     });
