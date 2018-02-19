@@ -70,9 +70,9 @@ app.get('/vendors/:id', (req, res) => {
 });
 
 // change to accept id
-app.get('/cards', (req, res) => {
-    var userId = req.params.userId;
-    card.getAllCard().then((c) => {
+app.get('/cards/:id', (req, res) => {
+    var userId = req.params.id;
+    card.getAllCard(userId).then((c) => {
         res.send(c);
     });
 });
@@ -109,9 +109,7 @@ app.post('/users', (req, res) => {
             uuid: uuid()
         }).then((u) => {
             console.log(`u: ${u}`);
-            //var serializer = composerCommon.Serializer.toJson;
-            console.log(BusinessNetworkConnection);
-            res.send(BusinessNetworkConnection.toJSON(u));
+            res.send(u);
         }).catch( (e) => {
             console.log('Error');
             res.send(e.message).status(404);
@@ -149,10 +147,11 @@ app.post('/partners', (req, res) => {
 });
 
 app.post('/cards', (req, res) => {
+    console.log('POST/cards');
     var newCard = {
         userId: req.body.userId,
         issuedCompany: req.body.vendorName,
-        point: req.body.point,
+        point:parseInt(req.body.point),
         uuid: uuid()
     };
 

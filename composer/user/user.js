@@ -100,6 +100,46 @@ module.exports = {
     addNewUser,
     getUser
 }
+// var addNewUser = function (newUser, error) {
+//     console.log('Invoke addNewUser function');
+//     console.log(newUser);
+//     if (error) {
+//         console.log('--- error ----');
+//         console.log(error);
+//         process.exit(1);
+//     }
+
+//     console.log('b4 connect');
+//     console.log(cardName);
+//     return connection.connect(cardName).then(function () {
+
+//         let bnDef = connection.getBusinessNetwork();
+
+//         console.log("Received Definition from Runtime: ",
+//             bnDef.getName(), "  ", bnDef.getVersion());
+
+//         let factory = bnDef.getFactory();
+
+//         let transaction = factory.newTransaction(namespace, transactionType);
+
+//         transaction.setPropertyValue('lastName', newUser.lastName);
+//         transaction.setPropertyValue('citizenId', newUser.citizenId);
+//         transaction.setPropertyValue('firstName', newUser.firstName);
+//         transaction.setPropertyValue('uuid', newUser.uuid);
+
+//         return connection.submitTransaction(transaction).then(() => {
+//             console.log("Transaction Submitted/Processed Successfully!!")
+
+//             connection.disconnect();
+
+//             return getUser(newUser.citizenId);
+//         });
+//     }).catch((error) => {
+//         console.log(error);
+
+//         connection.disconnect();
+//     });
+// }
 
 // return connection.query(query, {
 //     id: citizenId

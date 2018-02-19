@@ -94,35 +94,46 @@ var getCard = function(userId) {
     });
 }
 
-var getAllCard = function(userId) {
+var getAllCard = function (userId) {
 
     return connection.connect(cardName).then(function () {
 
-    var statement = 'SELECT  org.dek.network.User';
+        var statement = 'SELECT  org.dek.network.Card WHERE (userId == _$id)';
+        // #3 Build the query object
+        console.log('call query');
+        return connection.buildQuery(statement);
 
-    // #3 Build the query object
-    var query = connection.buildQuery(statement);
-
-    // #4 Execute the query
-    return connection.query(query) //,{id:'CRAFT01'});
-        .then((result) => {
-            var reUser = [];
-            console.log('Received card count:', result.length);
-            if (result.length > 0) {
-                result.forEach( (u) => {
-                    reUser.push(u.cardId);
-                });
-            }
-            connection.disconnect();
-            console.log(reUser);
-            return reUser;
-        }).catch((error) => {
-            console.log(error);
-            connection.disconnect();
-            return(error);
+        // #4 Execute the query
+    }).then((qry) => {
+        console.log('execute query');
+        return connection.query(qry, {id: userId});
+    }).then((result)=> { 
+        console.log('Received user count:', result.length);
+        if (!result) {
+            throw new Error('User not found with citizenId: ', citizenId);
+        }
+        // console.log(`result: ${result}`);
+        var cardList = [];
+        result.forEach((x)=>{
+            console.log(`${x.cardId} | ${x.userId} | ${x.issuedCompany} | ${x.point}`);
+            cardList.push({
+                cardId: x.cardId,
+                userId: x.userId,
+                issuedCompany: x.issuedCompany,
+                point: x.point
+            });
         });
+       // var serializer = connection.getSerializer();
+       // var userString = serializer.toJSON(result);
+
+        connection.disconnect();
+        return cardList;
+    }).catch((e)=>{
+        connection.disconnect();
+        return e.message;
     });
 }
+
 
 module.exports = {
     addNewCard,
