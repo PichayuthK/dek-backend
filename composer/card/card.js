@@ -21,7 +21,7 @@ var connection = new BusinessNetworkConnection({
 //     uuid:uuid()
 // });
 
-var addNewCard = function(newCard, error) {
+var addNewCard = function (newCard, error) {
     console.log('Invoke addNewCard function');
     console.log(newCard);
     if (error) {
@@ -52,7 +52,7 @@ var addNewCard = function(newCard, error) {
             console.log("Transaction Submitted/Processed Successfully!!")
 
             connection.disconnect();
-            return('completed');
+            return ('completed');
 
         });
     }).catch((error) => {
@@ -64,33 +64,35 @@ var addNewCard = function(newCard, error) {
 }
 
 
-var getCard = function(userId) {
+var getCard = function (userId) {
 
     return connection.connect(cardName).then(function () {
 
-    var statement = 'SELECT  org.dek.network.User WHERE (userId == _$id)';
+        var statement = 'SELECT  org.dek.network.User WHERE (userId == _$id)';
 
-    // #3 Build the query object
-    var query = connection.buildQuery(statement);
+        // #3 Build the query object
+        var query = connection.buildQuery(statement);
 
-    // #4 Execute the query
-    return connection.query(query, {id:userId}) //,{id:'CRAFT01'});
-        .then((result) => {
-            var reUser = [];
-            console.log('Received card count:', result.length);
-            if (result.length > 0) {
-                result.forEach( (u) => {
-                    reUser.push(u.cardId);
-                });
-            }
-            connection.disconnect();
-            console.log(reUser);
-            return reUser;
-        }).catch((error) => {
-            console.log(error);
-            connection.disconnect();
-            return(error);
-        });
+        // #4 Execute the query
+        return connection.query(query, {
+                id: userId
+            }) //,{id:'CRAFT01'});
+            .then((result) => {
+                var reUser = [];
+                console.log('Received card count:', result.length);
+                if (result.length > 0) {
+                    result.forEach((u) => {
+                        reUser.push(u.cardId);
+                    });
+                }
+                connection.disconnect();
+                console.log(reUser);
+                return reUser;
+            }).catch((error) => {
+                console.log(error);
+                connection.disconnect();
+                return (error);
+            });
     });
 }
 
@@ -106,15 +108,17 @@ var getAllCard = function (userId) {
         // #4 Execute the query
     }).then((qry) => {
         console.log('execute query');
-        return connection.query(qry, {id: userId});
-    }).then((result)=> { 
+        return connection.query(qry, {
+            id: userId
+        });
+    }).then((result) => {
         console.log('Received user count:', result.length);
         if (!result) {
             throw new Error('User not found with citizenId: ', citizenId);
         }
         // console.log(`result: ${result}`);
         var cardList = [];
-        result.forEach((x)=>{
+        result.forEach((x) => {
             console.log(`${x.cardId} | ${x.userId} | ${x.issuedCompany} | ${x.point}`);
             cardList.push({
                 cardId: x.cardId,
@@ -123,20 +127,36 @@ var getAllCard = function (userId) {
                 point: x.point
             });
         });
-       // var serializer = connection.getSerializer();
-       // var userString = serializer.toJSON(result);
+        // var serializer = connection.getSerializer();
+        // var userString = serializer.toJSON(result);
 
         connection.disconnect();
         return cardList;
-    }).catch((e)=>{
+    }).catch((e) => {
         connection.disconnect();
         return e.message;
     });
 }
 
+var getCardHistory = function () {
+    return connection.connect(cardName).then(function () {
+        var statement = "SELECT org.hyperledger.composer.system.AddAsset WHERE (targetRegistry == 'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card')"
+        return connection.buildQuery(statement)
+    }).then((qry) => {
+        return connection.query(qry);
+    }).then((result) => {
+        console.log(result);
+        connection.disconnect();
+        return result;
+    }).catch((e) => {
+        connection.disconnect();
+        return e.message;
+    });
+}
 
 module.exports = {
     addNewCard,
     getCard,
-    getAllCard
+    getAllCard,
+    getCardHistory
 }

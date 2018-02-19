@@ -69,6 +69,12 @@ app.get('/vendors/:id', (req, res) => {
     });
 });
 
+app.get('/cardshistory', (req,res) =>{
+    card.getCardHistory().then((c) => {
+        res.send(c);
+    });
+});
+
 // change to accept id
 app.get('/cards/:id', (req, res) => {
     var userId = req.params.id;
