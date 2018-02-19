@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Partner = mongoose.model('Partner', {
+var partnerSchema =  new mongoose.Schema({
     fromVendorId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company'
@@ -18,6 +18,6 @@ var Partner = mongoose.model('Partner', {
     
 });
 
-
+var Partner = mongoose.model('Partner', partnerSchema);
 
 module.exports = {Partner}

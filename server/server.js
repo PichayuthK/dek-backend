@@ -83,7 +83,10 @@ app.get('/partners/:id', (req, res) => {
     var id = mongoose.Types.ObjectId(fromVendor);
     Partner.find({
 
-    }).then((p) => {
+    })
+    .populate('fromVendorId')
+    .populate('toVendorId')
+    .then((p) => {
         res.send({
             p
         });

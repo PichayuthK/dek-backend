@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Company = mongoose.model('Company', {
+var companySchema = new mongoose.Schema({
     name:{
         type: String,
         trim:true
@@ -16,5 +16,7 @@ var Company = mongoose.model('Company', {
         type: String
     }
 });
+
+var Company = mongoose.model('Company', companySchema);
 
 module.exports = {Company};
