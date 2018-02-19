@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var user = require('./../composer/user/user.js');
+var userHyperledger = require('./../composer/user/user.js');
 var card = require('./../composer/card/card.js');
 var point = require('./../composer/point/point.js');
 var uuid = require('uuid/v1');
@@ -90,7 +90,15 @@ app.post('/users', (req, res) => {
         phoneNumber: req.body.phoneNumber
     });
     newUser.save().then((user) => {
-        res.send(user);     
+        userHyperledger.addNewUser({
+            citizenId: req.body.citizenid,
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
+            uuid: uuid()
+        }).then( (u) => {
+            console.log(`u: ${u}`);
+            res.send(u);
+        });     
     }, (e) => {
         res.status(404).send(e);
     });
@@ -100,7 +108,9 @@ app.post('/users/login', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     User.findByCredentials(username, password).then((user) => {
+        if(!user){
             res.send(user);
+        }
     }).catch((e) => {
         res.status(400).send();
     });

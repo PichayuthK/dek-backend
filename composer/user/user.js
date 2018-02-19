@@ -61,28 +61,25 @@ var addNewUser = function(newCard, error) {
     });
 }
 
-var getUser = function(id) {
+var getUser = function(citizenId) {
 
     return connection.connect(cardName).then(function () {
 
-    var statement = 'SELECT  org.dek.network.User';
+    var statement = 'SELECT  org.dek.network.User WHERE (citizenId == _$id)';
 
     // #3 Build the query object
     var query = connection.buildQuery(statement);
 
     // #4 Execute the query
-    return connection.query(query) //,{id:'CRAFT01'});
+    return connection.query(query,{id:citizenId})
         .then((result) => {
-            var reUser = [];
-            console.log('Received card count:', result.length);
-            if (result.length > 0) {
-                result.forEach( (u) => {
-                    reUser.push(u.userId);
-                });
+            // var reUser = [];
+            console.log('Received user count:', result.length);
+            if (!result) {
+                throw new Error ('User not found with citizenId: ',citizenId);
             }
             connection.disconnect();
-            console.log(reUser);
-            return reUser;
+            return result;
         }).catch((error) => {
             console.log(error);
             connection.disconnect();
