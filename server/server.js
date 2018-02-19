@@ -5,6 +5,8 @@ var userHyperledger = require('./../composer/user/user.js');
 var card = require('./../composer/card/card.js');
 var point = require('./../composer/point/point.js');
 var uuid = require('uuid/v1');
+var BusinessNetowrkDefinition = require('composer-client').BusinessNetowrkDefinition;
+
 
 var {
     Company
@@ -37,6 +39,16 @@ var newCard = ({
 
 app.get('/createCard', (req, res) => {
     card.addNewCard(newCard);
+});
+
+app.get('/users/:citizenid', (req,res) => {
+    userHyperledger.getUser(req.params.citizenid).then( (u) =>{
+        ////var Serializer = BusinessNetowrkDefinition.getSerializer();
+       // var stringUser = Serializer.toJSON(u);
+        console.log(`return user: ${u}`);
+
+        res.send(u);
+    });
 });
 
 app.get('/vendors', (req, res) => {
@@ -81,7 +93,7 @@ app.get('/partners/:id', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-    var newUser = new User ({
+    var newUser = new User({
         username: req.body.username,
         password: req.body.password,
         citizenId: req.body.citizenid,
@@ -95,10 +107,15 @@ app.post('/users', (req, res) => {
             firstName: req.body.firstname,
             lastName: req.body.lastname,
             uuid: uuid()
-        }).then( (u) => {
+        }).then((u) => {
             console.log(`u: ${u}`);
-            res.send(u);
-        });     
+            //var serializer = composerCommon.Serializer.toJson;
+            console.log(BusinessNetworkConnection);
+            res.send(BusinessNetworkConnection.toJSON(u));
+        }).catch( (e) => {
+            console.log('Error');
+            res.send(e.message).status(404);
+        });
     }, (e) => {
         res.status(404).send(e);
     });
@@ -108,7 +125,7 @@ app.post('/users/login', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     User.findByCredentials(username, password).then((user) => {
-        if(!user){
+        if (!user) {
             res.send(user);
         }
     }).catch((e) => {

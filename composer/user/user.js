@@ -1,3 +1,4 @@
+
 const config = require('./../../config/config.js');
 const bnUtil = require('./../admin-connection');
 const uuid = require('uuid/v1');
@@ -21,9 +22,9 @@ var connection = new BusinessNetworkConnection({
 //     uuid: uuid()
 // });
 
-var addNewUser = function(newCard, error) {
+var addNewUser = function (newUser, error) {
     console.log('Invoke addNewUser function');
-    console.log(newCard);
+    console.log(newUser);
     if (error) {
         console.log('--- error ----');
         console.log(error);
@@ -43,16 +44,17 @@ var addNewUser = function(newCard, error) {
 
         let transaction = factory.newTransaction(namespace, transactionType);
 
-        transaction.setPropertyValue('lastName', newCard.lastName);
-        transaction.setPropertyValue('citizenId', newCard.citizenId);
-        transaction.setPropertyValue('firstName', newCard.firstName);
-        transaction.setPropertyValue('uuid', newCard.uuid);
+        transaction.setPropertyValue('lastName', newUser.lastName);
+        transaction.setPropertyValue('citizenId', newUser.citizenId);
+        transaction.setPropertyValue('firstName', newUser.firstName);
+        transaction.setPropertyValue('uuid', newUser.uuid);
 
         return connection.submitTransaction(transaction).then(() => {
             console.log("Transaction Submitted/Processed Successfully!!")
 
             connection.disconnect();
 
+            return getUser(newUser.citizenId);
         });
     }).catch((error) => {
         console.log(error);
@@ -61,30 +63,33 @@ var addNewUser = function(newCard, error) {
     });
 }
 
-var getUser = function(citizenId) {
+var getUser = function (citizenId) {
 
     return connection.connect(cardName).then(function () {
 
-    var statement = 'SELECT  org.dek.network.User WHERE (citizenId == _$id)';
+        var statement = 'SELECT  org.dek.network.User WHERE (citizenId == _$id)';
+        // #3 Build the query object
+        console.log('call query');
+        return connection.buildQuery(statement);
 
-    // #3 Build the query object
-    var query = connection.buildQuery(statement);
+        // #4 Execute the query
+    }).then((qry) => {
+        console.log('execute query');
+        return connection.query(qry, {id: citizenId});
+    }).then((result)=> { 
+        console.log('Received user count:', result.length);
+        if (!result) {
+            throw new Error('User not found with citizenId: ', citizenId);
+        }
+        console.log(`result: ${result[0].userId}`);
+       // var serializer = connection.getSerializer();
+       // var userString = serializer.toJSON(result);
 
-    // #4 Execute the query
-    return connection.query(query,{id:citizenId})
-        .then((result) => {
-            // var reUser = [];
-            console.log('Received user count:', result.length);
-            if (!result) {
-                throw new Error ('User not found with citizenId: ',citizenId);
-            }
-            connection.disconnect();
-            return result;
-        }).catch((error) => {
-            console.log(error);
-            connection.disconnect();
-            return(error);
-        });
+        connection.disconnect();
+        return result[0].userId;
+    }).catch((e)=>{
+        connection.disconnect();
+        return e.message;
     });
 }
 
@@ -95,3 +100,21 @@ module.exports = {
     addNewUser,
     getUser
 }
+
+// return connection.query(query, {
+//     id: citizenId
+// })
+// .then((result) => {
+//     // var reUser = [];
+//     console.log('Received user count:', result.length);
+//     if (!result) {
+//         throw new Error('User not found with citizenId: ', citizenId);
+//     }
+//     connection.disconnect();
+//     var serializer = connection.getSerializer();
+//     return serializer.toJSON(result);
+// }).catch((error) => {
+//     console.log(error);
+//     connection.disconnect();
+//     return (error);
+// });
