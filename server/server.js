@@ -127,6 +127,7 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
     var fromVendor = req.params.fromVendorId;
     var userId = req.params.userId;
     console.log('fromVendorId: ', fromVendor);
+    console.log('userId ',userId);
     var id = mongoose.Types.ObjectId(fromVendor);
     var partnerList;
     Partner.find({
@@ -144,13 +145,12 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
         if(!partnerList){
             res.status(404).send();
         }
-
+        console.log(`partnerList: ${partnerList}`);
       card.getAllCard(userId)
         .then((c) => {
             return (c);
         })
         .then((userCard) => {
-
             partnerList.find({}).then((c) => {
                 var result = [];
                 userCard.forEach(e => {
@@ -163,7 +163,6 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
                 });
                 res.send(result);
             });
-
         }).catch((e) => {
             res.status(404).send(e.message);
         });
