@@ -97,18 +97,20 @@ app.get('/cards/:id', (req, res) => {
         return (c);
     })
     .then((userCard)=>{
-        var result = [];
+
         Company.find({}).then( (c) =>{
+            var result = [];
             userCard.forEach(e => {
                 var com = c.find( (x)=>{
                     return x.id == e.issuedCompany
                 });
-                e.detail = com;
+                //e.detail = com;
                 result.push(e);
                 console.log('e : ',e);
             });
+            res.send(result);
         });
-        res.send(result);
+        
     }).catch((e)=>{
         res.status(404).send(e.message);
     });
