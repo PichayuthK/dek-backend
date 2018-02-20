@@ -8,6 +8,10 @@ var companySchema = new mongoose.Schema({
     img:{
         type: String
     },
+    royaltyProgram:{
+        type:String,
+        required:false
+    },
     termAndCondition:{
         type: String,
         trim:true

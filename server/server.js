@@ -179,7 +179,7 @@ app.post('/cards', (req, res) => {
     console.log('POST/cards');
     var newCard = {
         userId: req.body.userId,
-        issuedCompany: req.body.vendorName,
+        issuedCompany: req.body.vendorid,
         point:parseInt(req.body.point),
         uuid: uuid()
     };
