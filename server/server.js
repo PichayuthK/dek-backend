@@ -130,7 +130,8 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
     console.log('userId ', userId);
     var id = mongoose.Types.ObjectId(fromVendor);
     var partnerList = [];
-    partnerList.push(Partner.find({})
+
+    var temp = Partner.find({})
         .populate('fromVendorId')
         .populate('toVendorId')
         .then((p) => {
@@ -139,8 +140,10 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
         })
         .catch((e) => {
             res.status(404).send();
-        })
-    );
+        });
+
+    partnerList.push(temp);
+
     if (!partnerList) {
         res.status(404).send();
     }
