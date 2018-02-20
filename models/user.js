@@ -28,7 +28,7 @@ var UserSchema = new mongoose.Schema({
 UserSchema.statics.findByCredentials = function (username, password) {
     var User = this;
     return User.findOne({
-        username
+        'username':username
     }).then((user) => {
         if (!user) {
             return Promise.reject(); //throw new Error("can't find a user with username :",username)
