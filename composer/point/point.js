@@ -47,6 +47,7 @@ var transferPoint = function(info, error) {
         transaction.setPropertyValue('toCardId', info.toCardId);
         transaction.setPropertyValue('fromPoint', info.fromPoint);
         transaction.setPropertyValue('toPoint', info.toPoint);
+        transaction.setPropertyValue('userId', info.userId);
 
         return connection.submitTransaction(transaction).then(() => {
             console.log("Transaction Submitted/Processed Successfully!!")

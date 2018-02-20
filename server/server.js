@@ -219,6 +219,7 @@ app.post('/cards', (req, res) => {
 
 app.post('/transferPoint', (req, res) => {
     console.log(`--> POST/transferPoint`);
+    console.log(`userId : ${req.body.userId}`);
     var myPoint = {
         fromCardId: req.body.fromCardId,
         toCardId: req.body.toCardId,
