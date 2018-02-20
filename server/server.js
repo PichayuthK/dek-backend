@@ -149,7 +149,7 @@ app.post('/users/login', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     console.log(`username: ${username}`);
-    conosle.log(`password: ${password}`);
+    console.log(`password: ${password}`);
     User.findByCredentials(username, password).then((user) => {
         if (!user) {
             res.send(user);
