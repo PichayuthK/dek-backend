@@ -26,6 +26,8 @@ var UserSchema = new mongoose.Schema({
 });
 
 UserSchema.statics.findByCredentials = function (username, password) {
+    console.log(`username: ${username}`);
+    console.log(`password: ${password}`);
     var User = this;
     return User.findOne({
         'username':username

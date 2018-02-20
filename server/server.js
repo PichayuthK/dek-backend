@@ -148,13 +148,12 @@ app.post('/users/login', (req, res) => {
     console.log(`--> POST/users/login`);
     var username = req.body.username;
     var password = req.body.password;
-    console.log(`username: ${username}`);
-    console.log(`password: ${password}`);
+
     User.findByCredentials(username, password).then((user) => {
         if (!user) {
             res.send(user);
         }
-        res.send().status(400);
+        res.status(400).send();
     }).catch((e) => {
         res.status(400).send();
     });
