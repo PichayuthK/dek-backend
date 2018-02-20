@@ -75,7 +75,7 @@ var getCard = function () {
         var query = connection.buildQuery(statement);
 
         // #4 Execute the query
-        return connection.query() //,{id:'CRAFT01'});
+        return connection.query(query) //,{id:'CRAFT01'});
             .then((result) => {
                 var reUser = [];
                 console.log('Received card count:', result.length);
