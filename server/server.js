@@ -103,6 +103,7 @@ app.get('/cards/:id', (req, res) => {
                     return x.id == e.issuedCompany
                 });
                 e.detail = com;
+                console.log('e : ',e);
             });
         });
         res.send(userCard);
