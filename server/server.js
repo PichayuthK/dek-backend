@@ -223,7 +223,8 @@ app.post('/transferPoint', (req, res) => {
         fromCardId: req.body.fromCardId,
         toCardId: req.body.toCardId,
         fromPoint: req.body.fromPoint,
-        toPoint: req.body.toPoint
+        toPoint: req.body.toPoint,
+        userId:req.body.userId
     };
     console.log(myPoint);
     point.transferPoint(myPoint)
