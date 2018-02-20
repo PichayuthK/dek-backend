@@ -37,6 +37,12 @@ var newCard = ({
     uuid: uuid()
 });
 
+app.get('/users', (req,res) => {
+    User.find({}).then((u)=>{
+        res.send(u);
+    });
+});
+
 app.get('/createCard', (req, res) => {
     card.addNewCard(newCard);
 });
@@ -202,8 +208,22 @@ app.post('/vendors', (req, res) => {
 
 });
 
-app.delete('/vendor/:id', (req, res) => {
+app.delete('/users', (req,res) =>{
+    var code = req.body.code;
+    if(code !='killemall'){
+        res.send('wrong code').status(404);
+    }
+    User.remove({}).then((rm)=>{
+        res.send({rm});
+    });
+});
+
+app.delete('/vendors/:id', (req, res) => {
     var id = req.params.id;
+    var code = req.body.code;
+    if(code !='killemall'){
+        res.send('wrong code').status(404);
+    }
     Company.findByIdAndRemove({
         _id: id
     }).then((com) => {
@@ -216,7 +236,11 @@ app.delete('/vendor/:id', (req, res) => {
     });
 });
 
-app.delete('/partner', (req, res) => {
+app.delete('/partners', (req, res) => {
+    var code = req.body.code;
+    if(code !='killemall'){
+        res.send('wrong code').status(404);
+    }
     Partner.remove({}).then((rm) => {
         res.send({
             rm
