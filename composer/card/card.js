@@ -81,7 +81,7 @@ var getCard = function () {
                 console.log('Received card count:', result.length);
                 if (result.length > 0) {
                     result.forEach((u) => {
-                        reUser.push(u.cardId);
+                        reUser.push(u);
                     });
                 }
                 connection.disconnect();
