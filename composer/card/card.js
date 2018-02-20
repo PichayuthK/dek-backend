@@ -47,6 +47,7 @@ var addNewCard = function (newCard, error) {
         transaction.setPropertyValue('issuedCompany', newCard.issuedCompany);
         transaction.setPropertyValue('point', newCard.point);
         transaction.setPropertyValue('uuid', newCard.uuid);
+        transaction.setPropertyValue('cardNumber',newUser.cardNumber);
 
         return connection.submitTransaction(transaction).then(() => {
             console.log("Transaction Submitted/Processed Successfully!!")

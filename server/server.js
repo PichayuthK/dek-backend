@@ -104,7 +104,7 @@ app.get('/cards/:id', (req, res) => {
                 var com = c.find( (x)=>{
                     return x.id == e.issuedCompany
                 });
-                //e.detail = com;
+                e.detail = com;
                 result.push(e);
                 console.log('e : ',e);
             });
@@ -200,6 +200,7 @@ app.post('/cards', (req, res) => {
     var newCard = {
         userId: req.body.userId,
         issuedCompany: req.body.vendorid,
+        cardNumber: req.body.cardNumber,
         point:parseInt(req.body.point),
         uuid: uuid()
     };
