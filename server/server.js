@@ -154,6 +154,7 @@ app.post('/users/login', (req, res) => {
         if (!user) {
             res.send(user);
         }
+        res.send().status(400);
     }).catch((e) => {
         res.status(400).send();
     });
