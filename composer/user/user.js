@@ -81,6 +81,7 @@ var getUser = function (citizenId) {
         if (!result) {
             throw new Error('User not found with citizenId: ', citizenId);
         }
+        
         console.log(`result: ${result[0].userId}`);
        // var serializer = connection.getSerializer();
        // var userString = serializer.toJSON(result);

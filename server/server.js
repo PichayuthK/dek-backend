@@ -91,8 +91,23 @@ app.get('/cardshistory', (req,res) =>{
 app.get('/cards/:id', (req, res) => {
     console.log(`--> GET/cards/:id`);
     var userId = req.params.id;
-    card.getAllCard(userId).then((c) => {
-        res.send(c);
+
+    card.getAllCard(userId)
+    .then((c) => {
+        return (c);
+    })
+    .then((userCard)=>{
+        Company.find({}).then( (c) =>{
+            userCard.forEach(e => {
+                var com = c.find( (x)=>{
+                    return x.id == e.issuedCompany
+                });
+                e.detail = com;
+            });
+        });
+        res.send(userCard);
+    }).catch((e)=>{
+        res.status(404).send(e.message);
     });
 });
 
