@@ -149,7 +149,8 @@ app.post('/users', (req, res) => {
         citizenId: req.body.citizenid,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
-        phoneNumber: req.body.phoneNumber
+        phoneNumber: req.body.phoneNumber,
+        toCompany:req.body.toCompany
     });
     console.log(`${newUser}`);
     newUser.save().then((user) => {
