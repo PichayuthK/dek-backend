@@ -149,8 +149,7 @@ app.post('/users', (req, res) => {
         citizenId: req.body.citizenid,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
-        phoneNumber: req.body.phoneNumber,
-        toCompany:req.body.toCompany
+        phoneNumber: req.body.phoneNumber
     });
     console.log(`${newUser}`);
     newUser.save().then((user) => {
@@ -226,7 +225,8 @@ app.post('/transferPoint', (req, res) => {
         toCardId: req.body.toCardId,
         fromPoint: req.body.fromPoint,
         toPoint: req.body.toPoint,
-        userId:req.body.userId
+        userId:req.body.userId,
+        toCompany:req.body.toCompany
     };
     console.log(myPoint);
     point.transferPoint(myPoint)
