@@ -65,19 +65,17 @@ var addNewCard = function (newCard, error) {
 }
 
 
-var getCard = function (userId) {
+var getCard = function () {
 
     return connection.connect(cardName).then(function () {
 
-        var statement = 'SELECT  org.dek.network.User WHERE (userId == _$id)';
+        var statement = 'SELECT  org.dek.network.Card ';
 
         // #3 Build the query object
         var query = connection.buildQuery(statement);
 
         // #4 Execute the query
-        return connection.query(query, {
-                id: userId
-            }) //,{id:'CRAFT01'});
+        return connection.query() //,{id:'CRAFT01'});
             .then((result) => {
                 var reUser = [];
                 console.log('Received card count:', result.length);

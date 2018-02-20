@@ -87,6 +87,12 @@ app.get('/cardshistory', (req,res) =>{
     });
 });
 
+app.get('/cards', (req,res) => {
+    card.getCard().then((c)=>{
+        res.send(c);
+    });
+});
+
 // change to accept id
 app.get('/cards/:id', (req, res) => {
     console.log(`--> GET/cards/:id`);
