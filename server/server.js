@@ -37,9 +37,9 @@ app.get('/', (req, res) => {
 //     uuid: uuid()
 // });
 
-app.get('/users', (req,res) => {
+app.get('/users', (req, res) => {
     console.log(`--> GET/users`);
-    User.find({}).then((u)=>{
+    User.find({}).then((u) => {
         res.send(u);
     });
 });
@@ -49,11 +49,11 @@ app.get('/createCard', (req, res) => {
     card.addNewCard(newCard);
 });
 
-app.get('/users/:citizenid', (req,res) => {
+app.get('/users/:citizenid', (req, res) => {
     console.log(`--> GET/users/:citizenId`);
-    userHyperledger.getUser(req.params.citizenid).then( (u) =>{
+    userHyperledger.getUser(req.params.citizenid).then((u) => {
         ////var Serializer = BusinessNetowrkDefinition.getSerializer();
-       // var stringUser = Serializer.toJSON(u);
+        // var stringUser = Serializer.toJSON(u);
         console.log(`return user: ${u}`);
 
         res.send(u);
@@ -80,15 +80,15 @@ app.get('/vendors/:id', (req, res) => {
     });
 });
 
-app.get('/cardshistory', (req,res) =>{
+app.get('/cardshistory', (req, res) => {
     console.log(`--> GET/users/:citizenId`);
     card.getCardHistory().then((c) => {
         res.send(c);
     });
 });
 
-app.get('/cards', (req,res) => {
-    card.getCard().then((c)=>{
+app.get('/cards', (req, res) => {
+    card.getCard().then((c) => {
         res.send(c);
     });
 });
@@ -99,27 +99,27 @@ app.get('/cards/:id', (req, res) => {
     var userId = req.params.id;
 
     card.getAllCard(userId)
-    .then((c) => {
-        return (c);
-    })
-    .then((userCard)=>{
+        .then((c) => {
+            return (c);
+        })
+        .then((userCard) => {
 
-        Company.find({}).then( (c) =>{
-            var result = [];
-            userCard.forEach(e => {
-                var com = c.find( (x)=>{
-                    return x.id == e.issuedCompany
+            Company.find({}).then((c) => {
+                var result = [];
+                userCard.forEach(e => {
+                    var com = c.find((x) => {
+                        return x.id == e.issuedCompany
+                    });
+                    e.detail = com;
+                    result.push(e);
+                    console.log('e : ', e);
                 });
-                e.detail = com;
-                result.push(e);
-                console.log('e : ',e);
+                res.send(result);
             });
-            res.send(result);
+
+        }).catch((e) => {
+            res.status(404).send(e.message);
         });
-        
-    }).catch((e)=>{
-        res.status(404).send(e.message);
-    });
 });
 
 app.get('/partners/:id', (req, res) => {
@@ -129,16 +129,16 @@ app.get('/partners/:id', (req, res) => {
     var id = mongoose.Types.ObjectId(fromVendor);
     Partner.find({
 
-    })
-    .populate('fromVendorId')
-    .populate('toVendorId')
-    .then((p) => {
-        res.send({
-            p
+        })
+        .populate('fromVendorId')
+        .populate('toVendorId')
+        .then((p) => {
+            res.send({
+                p
+            });
+        }, (e) => {
+            res.send(e).status(404);
         });
-    }, (e) => {
-        res.send(e).status(404);
-    });
 });
 
 app.post('/users', (req, res) => {
@@ -161,7 +161,7 @@ app.post('/users', (req, res) => {
         }).then((u) => {
             console.log(`u: ${u}`);
             res.send(u);
-        }).catch( (e) => {
+        }).catch((e) => {
             console.log('Error');
             res.send(e.message).status(404);
         });
@@ -207,7 +207,7 @@ app.post('/cards', (req, res) => {
         userId: req.body.userId,
         issuedCompany: req.body.vendorid,
         cardNumber: req.body.cardNumber,
-        point:parseInt(req.body.point),
+        point: parseInt(req.body.point),
         uuid: uuid()
     };
 
@@ -219,18 +219,19 @@ app.post('/cards', (req, res) => {
 
 app.post('/transferPoint', (req, res) => {
     console.log(`--> POST/transferPoint`);
-    var point = {
+    var myPoint = {
         fromCardId: req.body.fromCardId,
         toCardId: req.body.toCardId,
         fromPoint: req.body.fromPoint,
         toPoint: req.body.toPoint
     };
-
-    point.transferPoint = function (info, error) {
-        (point).then((c) => {
+    console.log(myPoint);
+    point.transferPoint(myPoint)
+        .then((c) => {
+            console.log(c);
             res.send(c);
         });
-    }
+        res.status(404).send();
 });
 
 app.post('/vendors', (req, res) => {
@@ -251,14 +252,16 @@ app.post('/vendors', (req, res) => {
 
 });
 
-app.delete('/users', (req,res) =>{
+app.delete('/users', (req, res) => {
     console.log(`--> DELETE/users`);
     var code = req.body.code;
-    if(code !='killemall'){
+    if (code != 'killemall') {
         res.send('wrong code').status(404);
     }
-    User.remove({}).then((rm)=>{
-        res.send({rm});
+    User.remove({}).then((rm) => {
+        res.send({
+            rm
+        });
     });
 });
 
@@ -266,7 +269,7 @@ app.delete('/vendors/:id', (req, res) => {
     console.log(`--> DELETE/vendors/:id`);
     var id = req.params.id;
     var code = req.body.code;
-    if(code !='killemall'){
+    if (code != 'killemall') {
         res.send('wrong code').status(404);
     }
     Company.findByIdAndRemove({
@@ -284,7 +287,7 @@ app.delete('/vendors/:id', (req, res) => {
 app.delete('/partners', (req, res) => {
     console.log(`--> DELETE/partners`);
     var code = req.body.code;
-    if(code !='killemall'){
+    if (code != 'killemall') {
         res.send('wrong code').status(404);
     }
     Partner.remove({}).then((rm) => {

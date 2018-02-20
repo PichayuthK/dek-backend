@@ -1,18 +1,18 @@
-// const config = require('./../../config/config.js');
-// const bnUtil = require('./../admin-connection');
-// const uuid = require('uuid/v1');
+const config = require('./../../config/config.js');
+const bnUtil = require('./../admin-connection');
+const uuid = require('uuid/v1');
 
-// var cardStore = require('composer-common').FileSystemCardStore;
-// var BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
+var cardStore = require('composer-common').FileSystemCardStore;
+var BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 
-// const namespace = config.namespace;
-// const transactionType = config.transactionTransferPoint;
-// var cardName = config.cardName;
-// const myCardStore = new cardStore();
-// var connection = new BusinessNetworkConnection({
-//     cardStore: myCardStore
-// });
-// // bnUtil.connect(addNewUser);
+const namespace = config.namespace;
+const transactionType = config.transactionTransferPoint;
+var cardName = config.cardName;
+const myCardStore = new cardStore();
+var connection = new BusinessNetworkConnection({
+    cardStore: myCardStore
+});
+// bnUtil.connect(addNewUser);
 
 // // addNewUser({
 // //     lastName: 'Kitti',
@@ -21,45 +21,45 @@
 // //     uuid: uuid()
 // // });
 
-// var transferPoint = function(info, error) {
-//     console.log('Invoke transferPoint function');
-//     console.log(info);
-//     if (error) {
-//         console.log('--- error ----');
-//         console.log(error);
-//         process.exit(1);
-//     }
+var transferPoint = function(info, error) {
+    console.log('Invoke transferPoint function');
+    console.log(info);
+    if (error) {
+        console.log('--- error ----');
+        console.log(error);
+        process.exit(1);
+    }
 
-//     console.log('b4 connect');
-//     console.log(cardName);
-//     return connection.connect(cardName).then(function () {
+    console.log('b4 connect');
+    console.log(cardName);
+    return connection.connect(cardName).then(function () {
 
-//         let bnDef = connection.getBusinessNetwork();
+        let bnDef = connection.getBusinessNetwork();
 
-//         console.log("Received Definition from Runtime: ",
-//             bnDef.getName(), "  ", bnDef.getVersion());
+        console.log("Received Definition from Runtime: ",
+            bnDef.getName(), "  ", bnDef.getVersion());
 
-//         let factory = bnDef.getFactory();
+        let factory = bnDef.getFactory();
 
-//         let transaction = factory.newTransaction(namespace, transactionType);
+        let transaction = factory.newTransaction(namespace, transactionType);
 
-//         transaction.setPropertyValue('fromCardId', info.fromCardId);
-//         transaction.setPropertyValue('toCardId', info.toCardId);
-//         transaction.setPropertyValue('fromPoint', info.fromPoint);
-//         transaction.setPropertyValue('toPoint', info.toPoint);
+        transaction.setPropertyValue('fromCardId', info.fromCardId);
+        transaction.setPropertyValue('toCardId', info.toCardId);
+        transaction.setPropertyValue('fromPoint', info.fromPoint);
+        transaction.setPropertyValue('toPoint', info.toPoint);
 
-//         return connection.submitTransaction(transaction).then(() => {
-//             console.log("Transaction Submitted/Processed Successfully!!")
+        return connection.submitTransaction(transaction).then(() => {
+            console.log("Transaction Submitted/Processed Successfully!!")
 
-//             connection.disconnect();
+            connection.disconnect();
 
-//         });
-//     }).catch((error) => {
-//         console.log(error);
+        });
+    }).catch((error) => {
+        console.log(error);
 
-//         connection.disconnect();
-//     });
-// }
+        connection.disconnect();
+    });
+}
 
 // var getUser = function(id) {
 
@@ -94,6 +94,6 @@
 // // getUser(1);
 
 
-// module.exports = {
-//     addNewUser
-// }
+module.exports = {
+    transferPoint
+}
