@@ -127,7 +127,7 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
     var fromVendor = req.params.fromVendorId;
     var userId = req.params.userId;
     console.log('fromVendorId: ', fromVendor);
-    console.log('userId ',userId);
+    console.log('userId ', userId);
     var id = mongoose.Types.ObjectId(fromVendor);
     var partnerList = Partner.find({})
         .populate('fromVendorId')
@@ -136,31 +136,30 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
             console.log(`p : ${p}`);
             return p;
         })
-        .catch((e)=>{
+        .catch((e) => {
             res.status(404).send();
         });
 
-        if(!partnerList){
-            res.status(404).send();
-        }
-        console.log(`partnerList: ${partnerList}`);
-      card.getAllCard(userId)
+    if (!partnerList) {
+        res.status(404).send();
+    }
+    console.log(`partnerList: ${partnerList}`);
+    card.getAllCard(userId)
         .then((c) => {
             return (c);
         })
         .then((userCard) => {
-            partnerList.find({}).then((c) => {
-                var result = [];
-                userCard.forEach(e => {
-                    var com = c.find((x) => {
-                        return x.id == e.issuedCompany
-                    });
-                    e.detail = com;
-                    result.push(e);
-                    console.log('e : ', e);
+            var result = [];
+            userCard.forEach(e => {
+                var com = partnerList.find((x) => {
+                    console.log(`x : ${x}`);
+                    return x.toVendorId.id == e.issuedCompany
                 });
-                res.send(result);
+                e.detail = com;
+                result.push(e);
+                console.log('e : ', e);
             });
+            res.send(result);
         }).catch((e) => {
             res.status(404).send(e.message);
         });
