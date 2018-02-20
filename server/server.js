@@ -122,22 +122,50 @@ app.get('/cards/:id', (req, res) => {
         });
 });
 
-app.get('/partners/:id', (req, res) => {
-    console.log(`--> GET/partners/:id`);
-    var fromVendor = req.params.id;
+app.get('/partners/:fromVendorId/:userId', (req, res) => {
+    console.log(`--> GET/partners/:fromVendorId/:userId`);
+    var fromVendor = req.params.fromVendorId;
+    var userId = req.params.userId;
     console.log('fromVendorId: ', fromVendor);
     var id = mongoose.Types.ObjectId(fromVendor);
+    var partnerList;
     Partner.find({
-
         })
         .populate('fromVendorId')
         .populate('toVendorId')
         .then((p) => {
-            res.send({
-                p
+            partnerList = p
+            return p;
+        })
+        .catch((e)=>{
+            res.status(404).send();
+        });
+
+        if(!partnerList){
+            res.status(404).send();
+        }
+
+      card.getAllCard(userId)
+        .then((c) => {
+            return (c);
+        })
+        .then((userCard) => {
+
+            partnerList.find({}).then((c) => {
+                var result = [];
+                userCard.forEach(e => {
+                    var com = c.find((x) => {
+                        return x.id == e.issuedCompany
+                    });
+                    e.detail = com;
+                    result.push(e);
+                    console.log('e : ', e);
+                });
+                res.send(result);
             });
-        }, (e) => {
-            res.send(e).status(404);
+
+        }).catch((e) => {
+            res.status(404).send(e.message);
         });
 });
 
@@ -225,8 +253,8 @@ app.post('/transferPoint', (req, res) => {
         toCardId: req.body.toCardId,
         fromPoint: req.body.fromPoint,
         toPoint: req.body.toPoint,
-        userId:req.body.userId,
-        toCompany:req.body.toCompany
+        userId: req.body.userId,
+        toCompany: req.body.toCompany
     };
     console.log(myPoint);
     point.transferPoint(myPoint)
@@ -234,7 +262,7 @@ app.post('/transferPoint', (req, res) => {
             console.log(c);
             res.send(c);
         });
-        res.status(404).send();
+    res.status(404).send();
 });
 
 app.post('/vendors', (req, res) => {
