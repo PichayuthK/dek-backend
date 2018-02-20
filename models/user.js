@@ -30,12 +30,14 @@ UserSchema.statics.findByCredentials = function (username, password) {
     console.log(`password: ${password}`);
     var User = this;
     return User.findOne({
-        'username':username
+        username
     }).then((user) => {
+        console.log(user);
         if (!user) {
             return Promise.reject(); //throw new Error("can't find a user with username :",username)
         }
         return new Promise((resolve, reject) => {
+            console.log(user.password);
             if (user.password == password) {
                 resolve(user);
             } else {

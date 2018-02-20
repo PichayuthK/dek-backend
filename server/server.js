@@ -150,7 +150,7 @@ app.post('/users/login', (req, res) => {
     var password = req.body.password;
 
     User.findByCredentials(username, password).then((user) => {
-        if (!user) {
+        if (user) {
             res.send(user);
         }
         res.status(400).send();
