@@ -30,24 +30,27 @@ app.get('/', (req, res) => {
     res.send('welcome to Dek');
 });
 
-var newCard = ({
-    userId: '2',
-    issuedCompany: 'PTT',
-    point: 999,
-    uuid: uuid()
-});
+// var newCard = ({
+//     userId: '2',
+//     issuedCompany: 'PTT',
+//     point: 999,
+//     uuid: uuid()
+// });
 
 app.get('/users', (req,res) => {
+    console.log(`--> GET/users`);
     User.find({}).then((u)=>{
         res.send(u);
     });
 });
 
 app.get('/createCard', (req, res) => {
+    console.log(`--> GET/createCard`);
     card.addNewCard(newCard);
 });
 
 app.get('/users/:citizenid', (req,res) => {
+    console.log(`--> GET/users/:citizenId`);
     userHyperledger.getUser(req.params.citizenid).then( (u) =>{
         ////var Serializer = BusinessNetowrkDefinition.getSerializer();
        // var stringUser = Serializer.toJSON(u);
@@ -58,6 +61,7 @@ app.get('/users/:citizenid', (req,res) => {
 });
 
 app.get('/vendors', (req, res) => {
+    console.log(`--> GET/vendors`);
     Company.find().then((c) => {
         res.send(c);
     }, (e) => {
@@ -67,6 +71,7 @@ app.get('/vendors', (req, res) => {
 });
 
 app.get('/vendors/:id', (req, res) => {
+    console.log(`--> GET/vendors/:id`);
     var id = req.params.id;
     Company.findById(id).then((c) => {
         return res.send(c);
@@ -76,6 +81,7 @@ app.get('/vendors/:id', (req, res) => {
 });
 
 app.get('/cardshistory', (req,res) =>{
+    console.log(`--> GET/users/:citizenId`);
     card.getCardHistory().then((c) => {
         res.send(c);
     });
@@ -83,6 +89,7 @@ app.get('/cardshistory', (req,res) =>{
 
 // change to accept id
 app.get('/cards/:id', (req, res) => {
+    console.log(`--> GET/cards/:id`);
     var userId = req.params.id;
     card.getAllCard(userId).then((c) => {
         res.send(c);
@@ -90,6 +97,7 @@ app.get('/cards/:id', (req, res) => {
 });
 
 app.get('/partners/:id', (req, res) => {
+    console.log(`--> GET/partners/:id`);
     var fromVendor = req.params.id;
     console.log('fromVendorId: ', fromVendor);
     var id = mongoose.Types.ObjectId(fromVendor);
@@ -108,6 +116,7 @@ app.get('/partners/:id', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
+    console.log(`--> POST/users`);
     var newUser = new User({
         username: req.body.username,
         password: req.body.password,
@@ -116,6 +125,7 @@ app.post('/users', (req, res) => {
         lastname: req.body.lastname,
         phoneNumber: req.body.phoneNumber
     });
+    console.log(`${newUser}`);
     newUser.save().then((user) => {
         userHyperledger.addNewUser({
             citizenId: req.body.citizenid,
@@ -135,8 +145,11 @@ app.post('/users', (req, res) => {
 });
 
 app.post('/users/login', (req, res) => {
+    console.log(`--> POST/users/login`);
     var username = req.body.username;
     var password = req.body.password;
+    console.log(`username: ${username}`);
+    conosle.log(`password: ${password}`);
     User.findByCredentials(username, password).then((user) => {
         if (!user) {
             res.send(user);
@@ -148,6 +161,7 @@ app.post('/users/login', (req, res) => {
 });
 
 app.post('/partners', (req, res) => {
+    console.log(`--> POST/partners`);
     var newPartner = new Partner({
         fromVendorId: mongoose.Types.ObjectId(req.body.fromVendorId),
         toVendorId: mongoose.Types.ObjectId(req.body.toVendorId),
@@ -177,6 +191,7 @@ app.post('/cards', (req, res) => {
 });
 
 app.post('/transferPoint', (req, res) => {
+    console.log(`--> POST/transferPoint`);
     var point = {
         fromCardId: req.body.fromCardId,
         toCardId: req.body.toCardId,
@@ -192,6 +207,7 @@ app.post('/transferPoint', (req, res) => {
 });
 
 app.post('/vendors', (req, res) => {
+    console.log(`--> POST/vendors`);
     console.log(req.body);
     var company = new Company({
         name: req.body.name,
@@ -209,6 +225,7 @@ app.post('/vendors', (req, res) => {
 });
 
 app.delete('/users', (req,res) =>{
+    console.log(`--> DELETE/users`);
     var code = req.body.code;
     if(code !='killemall'){
         res.send('wrong code').status(404);
@@ -219,6 +236,7 @@ app.delete('/users', (req,res) =>{
 });
 
 app.delete('/vendors/:id', (req, res) => {
+    console.log(`--> DELETE/vendors/:id`);
     var id = req.params.id;
     var code = req.body.code;
     if(code !='killemall'){
@@ -237,6 +255,7 @@ app.delete('/vendors/:id', (req, res) => {
 });
 
 app.delete('/partners', (req, res) => {
+    console.log(`--> DELETE/partners`);
     var code = req.body.code;
     if(code !='killemall'){
         res.send('wrong code').status(404);
