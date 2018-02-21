@@ -136,14 +136,14 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
         .populate('toVendorId')
         .then((p) => {
             console.log(`p : ${p}`);
-partnerList.push(p);
+            partnerList.push(p);
             return p;
         })
         .catch((e) => {
             res.status(404).send();
         });
-	console.log(`temp: ${temp}`);
-   // partnerList.push(temp);
+    console.log(`temp: ${temp}`);
+    // partnerList.push(temp);
 
     if (!partnerList) {
         res.status(404).send();
@@ -158,7 +158,7 @@ partnerList.push(p);
             userCard.forEach(e => {
                 var com = partnerList.find((x) => {
                     console.log(`x : ${x}`);
-console.log(`x.toVendorId ${x.toVendorId}`);
+                    console.log(`x.toVendorId ${x.toVendorId}`);
                     return x.toVendorId.id == e.issuedCompany
                 });
                 e.detail = com;
@@ -166,8 +166,8 @@ console.log(`x.toVendorId ${x.toVendorId}`);
                 console.log('e : ', e);
             });
             res.send(result);
-        }).catch((e) => {
-            res.status(404).send(e.message);
+        }, (e) => {
+            res.status(404).send();
         });
 });
 
