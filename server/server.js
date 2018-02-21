@@ -131,7 +131,9 @@ app.get('/partners/:fromVendorId', (req, res) => {
 
     var id = mongoose.Types.ObjectId(fromVendor);
 
-    var temp = Partner.find({})
+    var temp = Partner.find({
+        fromVendorId: fromVendor
+    })
         .populate('fromVendorId')
         .populate('toVendorId')
         .then((p) => {
@@ -144,13 +146,14 @@ app.get('/partners/:fromVendorId', (req, res) => {
     
 });
 
-app.get('/partners/:fromVendorId/:userId', (req, res) => {
-    console.log(`--> GET/partners/:fromVendorId/:userId`);
+app.get('/partners/:fromVendorId/:toVendorId/:userId', (req, res) => {
+    console.log(`--> GET/partners/:fromVendorId/:toVendorId/:userId`);
     var fromVendor = req.params.fromVendorId;
+    var toVendor = req.params.toVendorId;
     var userId = req.params.userId;
     console.log('fromVendorId: ', fromVendor);
+    console.log('toVendorId ', toVendor);
     console.log('userId ', userId);
-    var id = mongoose.Types.ObjectId(fromVendor);
     // var partnerList = [];
 
     // var temp = Partner.find({})
@@ -177,7 +180,10 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
         })
         .then((userCard) => {
             var result = [];
-            Partner.find({})
+            Partner.find({
+                fromVendorId: fromVendor,
+                toVendorId:toVendor
+            })
                 .populate('fromVendorId')
                 .populate('toVendorId')
                 .then((c) => {
