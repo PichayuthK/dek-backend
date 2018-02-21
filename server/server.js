@@ -136,13 +136,14 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
         .populate('toVendorId')
         .then((p) => {
             console.log(`p : ${p}`);
+partnerList.push(p);
             return p;
         })
         .catch((e) => {
             res.status(404).send();
         });
-
-    partnerList.push(temp);
+	console.log(`temp: ${temp}`);
+   // partnerList.push(temp);
 
     if (!partnerList) {
         res.status(404).send();
@@ -157,6 +158,7 @@ app.get('/partners/:fromVendorId/:userId', (req, res) => {
             userCard.forEach(e => {
                 var com = partnerList.find((x) => {
                     console.log(`x : ${x}`);
+console.log(`x.toVendorId ${x.toVendorId}`);
                     return x.toVendorId.id == e.issuedCompany
                 });
                 e.detail = com;
