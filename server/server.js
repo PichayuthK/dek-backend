@@ -302,6 +302,8 @@ app.post('/transferPoint', (req, res) => {
         .then((c) => {
             console.log(c);
             res.send(c);
+        }).catch( (e)=>{
+            res.status(404).send();
         });
     res.status(404).send();
 });
