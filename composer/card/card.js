@@ -140,12 +140,22 @@ var getAllCard = function (userId) {
 
 var getCardHistory = function () {
     return connection.connect(cardName).then(function () {
-        var statement = "SELECT org.hyperledger.composer.system.AddAsset WHERE (targetRegistry == 'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card')"
+        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')";
+        //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
         return connection.buildQuery(statement)
     }).then((qry) => {
         return connection.query(qry);
     }).then((result) => {
-        console.log(result);
+        //console.log(result);
+        var filteredResult = result.filter((x) => {
+            return (x.eventsEmitted);
+        }); 
+        filteredResult.forEach((x) => {
+            console.log('----------------------------------->');
+            console.log(x);
+            console.log();
+            console.log();
+        });
         connection.disconnect();
         return result;
     }).catch((e) => {

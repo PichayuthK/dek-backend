@@ -38,9 +38,9 @@ function getMyHistorian() {
             // 4. Get all the transaction Registries
             return connection.getAllTransactionRegistries();
         }).then((registries) => {
-            registries.forEach((x) => {
-                console.log(x);
-            });
+            // registries.forEach((x) => {
+            //     console.log(x);
+            // });
             printRegistry(registries);
 
             // 5. Get the Historian Registry
@@ -49,7 +49,7 @@ function getMyHistorian() {
         }).then((registry) => {
             console.log("Historian Registry: ", registry.registryType, "   ", registry.id);
             (registry.getAll().then(function(his){
-               // console.log(his);
+                console.log(his);
             }));
             // 6. Get the Identity Registry
             return connection.getIdentityRegistry();

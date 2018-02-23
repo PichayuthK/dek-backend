@@ -80,9 +80,12 @@ app.get('/vendors/:id', (req, res) => {
     });
 });
 
-app.get('/cardshistory', (req, res) => {
-    console.log(`--> GET/users/:citizenId`);
-    card.getCardHistory().then((c) => {
+app.post('/cardshistory', (req, res) => {
+    console.log(`--> POST/cardshistory`);
+    var info = {
+        userId: req.body.userId
+    };
+    card.getCardHistory(info).then((c) => {
         res.send(c);
     });
 });
@@ -132,8 +135,8 @@ app.get('/partners/:fromVendorId', (req, res) => {
     var id = mongoose.Types.ObjectId(fromVendor);
 
     var temp = Partner.find({
-        fromVendorId: fromVendor
-    })
+            fromVendorId: fromVendor
+        })
         .populate('fromVendorId')
         .populate('toVendorId')
         .then((p) => {
@@ -143,7 +146,7 @@ app.get('/partners/:fromVendorId', (req, res) => {
         .catch((e) => {
             res.status(404).send();
         });
-    
+
 });
 
 app.get('/partners/:fromVendorId/:toVendorId/:userId', (req, res) => {
@@ -170,9 +173,9 @@ app.get('/partners/:fromVendorId/:toVendorId/:userId', (req, res) => {
     // console.log(`temp: ${temp}`);
     // partnerList.push(temp);
 
-//     if (!partnerList) {
-//         res.status(404).send();
-//     }
+    //     if (!partnerList) {
+    //         res.status(404).send();
+    //     }
     // console.log(`partnerList: ${partnerList}`);
     card.getAllCard(userId)
         .then((c) => {
@@ -181,23 +184,23 @@ app.get('/partners/:fromVendorId/:toVendorId/:userId', (req, res) => {
         .then((userCard) => {
             var result = [];
             Partner.find({
-                fromVendorId: fromVendor,
-                toVendorId:toVendor
-            })
+                    fromVendorId: fromVendor,
+                    toVendorId: toVendor
+                })
                 .populate('fromVendorId')
                 .populate('toVendorId')
                 .then((c) => {
                     userCard.forEach(e => {
                         var com = c.find((x) => {
-                            console.log(`c : ${c}`);    
+                            console.log(`c : ${c}`);
                             console.log(`x : ${x}`);
                             console.log(`x.toVendorId ${x.toVendorId}`);
                             return x.toVendorId.id == e.issuedCompany
                         });
-                        if(com){
-                        e.detail = com;
-                        result.push(e);
-                        console.log('e : ', e);
+                        if (com) {
+                            e.detail = com;
+                            result.push(e);
+                            console.log('e : ', e);
                         }
                     });
                     res.send(result);

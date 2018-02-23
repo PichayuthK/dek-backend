@@ -50,16 +50,15 @@ var transferPoint = function(info, error) {
         transaction.setPropertyValue('userId', info.userId);
         transaction.setPropertyValue('toCompany', info.toCompany);
 
-        return connection.submitTransaction(transaction).then(() => {
-            console.log("Transaction Submitted/Processed Successfully!!")
-
-            connection.disconnect();
-
-        });
+        return connection.submitTransaction(transaction);
+    }).then(() => {
+        console.log("Transaction Submitted/Processed Successfully!!")
+        connection.disconnect();
+        return true;
     }).catch((error) => {
         console.log(error);
-
         connection.disconnect();
+        return false;
     });
 }
 
