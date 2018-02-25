@@ -140,7 +140,7 @@ var getAllCard = function (userId) {
 
 var getCardHistory = function () {
     return connection.connect(cardName).then(function () {
-        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')";
+        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')";// ORDER BY (transactionTimestamp DESC)";
         //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
         return connection.buildQuery(statement)
     }).then((qry) => {

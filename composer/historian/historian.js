@@ -13,7 +13,37 @@ var connection = new BusinessNetworkConnection({
     cardStore: myCardStore
 });
 
-getMyHistorian();
+getCardHistory();
+function getCardHistory() {
+    return connection.connect(cardName).then(function () {
+        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')";// ORDER BY (transactionTimestamp DESC)";
+        //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
+        return connection.buildQuery(statement)
+    }).then((qry) => {
+        return connection.query(qry);
+    }).then((result) => {
+        //console.log(result);
+        var filteredResult = result.filter((x) => {
+            return (x.eventsEmitted);
+        }); 
+
+        console.log((result[0])['eventsEmitted']);
+        // result.forEach((x) => {
+        //     console.log('----------------------------------->');
+        //     console.log();
+        //     console.log();
+        // });
+        // console.log(result);
+        connection.disconnect();
+        return result;
+    }).catch((e) => {
+        connection.disconnect();
+        return e.message;
+    });
+}
+
+
+// getMyHistorian();
 function getMyHistorian() {
 
     return connection.connect(cardName).then(function () {
@@ -47,9 +77,9 @@ function getMyHistorian() {
             return connection.getHistorian();
 
         }).then((registry) => {
-            console.log("Historian Registry: ", registry.registryType, "   ", registry.id);
+            console.log("Historian Registry: ", registry.registryType, "   ", registry.id, "   ",registry.toJSON());
             (registry.getAll().then(function(his){
-                console.log(his);
+                // console.log(his);
             }));
             // 6. Get the Identity Registry
             return connection.getIdentityRegistry();
