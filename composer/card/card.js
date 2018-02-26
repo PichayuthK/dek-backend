@@ -1,6 +1,8 @@
 const config = require('./../../config/config.js');
 const bnUtil = require('./../admin-connection');
 const uuid = require('uuid/v1');
+const _ = require('lodash');
+const moment = require('moment');
 
 var cardStore = require('composer-common').FileSystemCardStore;
 var BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
@@ -138,26 +140,29 @@ var getAllCard = function (userId) {
     });
 }
 
-var getCardHistory = function () {
+function getCardHistory(myUserId) {
     return connection.connect(cardName).then(function () {
-        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')";// ORDER BY (transactionTimestamp DESC)";
+        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')"; // ORDER BY transactionTimestamp DESC";
         //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
         return connection.buildQuery(statement)
     }).then((qry) => {
         return connection.query(qry);
     }).then((result) => {
-        //console.log(result);
-        var filteredResult = result.filter((x) => {
-            return (x.eventsEmitted);
-        }); 
-        filteredResult.forEach((x) => {
-            console.log('----------------------------------->');
-            console.log(x);
-            console.log();
-            console.log();
+        var temp = [];
+        result.forEach((x) => {
+            var item = x['eventsEmitted'][0];
+            temp.push(item);
         });
+        temp = temp.filter((x)=>{
+            return x.userId = myUserId;
+        });
+        var sortTemp = _.sortBy(temp, function (x){
+            var tempTime = new moment(x.dateTime).format('YYYY-MM-DD HH:mm:ss');
+            return tempTime;
+        }).reverse();
         connection.disconnect();
-        return result;
+        // console.log(sortTemp);
+        return sortTemp;
     }).catch((e) => {
         connection.disconnect();
         return e.message;

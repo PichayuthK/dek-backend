@@ -149,6 +149,18 @@ app.get('/partners/:fromVendorId', (req, res) => {
 
 });
 
+app.get('/transferPoint/:id', (req,res)=>{
+    var userId = req.params.id;
+    card.getCardHistory(userId)
+    .then((x)=>{
+        // console.log(x);
+        res.send(x);
+    }).catch((e)=>{
+        console.log(e);
+        res.status(404).send(e);
+    });
+});
+
 app.get('/partners/:fromVendorId/:toVendorId/:userId', (req, res) => {
     console.log(`--> GET/partners/:fromVendorId/:toVendorId/:userId`);
     var fromVendor = req.params.fromVendorId;

@@ -1,6 +1,8 @@
 const config = require('./../../config/config.js');
 const bnUtil = require('./../admin-connection');
 const uuid = require('uuid/v1');
+const _ = require('lodash');
+const moment = require('moment');
 
 var cardStore = require('composer-common').FileSystemCardStore;
 var BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
@@ -14,28 +16,30 @@ var connection = new BusinessNetworkConnection({
 });
 
 getCardHistory();
+
 function getCardHistory() {
+    var myUserId = 1;
     return connection.connect(cardName).then(function () {
-        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')";// ORDER BY (transactionTimestamp DESC)";
+        var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')"; // ORDER BY transactionTimestamp DESC";
         //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
         return connection.buildQuery(statement)
     }).then((qry) => {
         return connection.query(qry);
     }).then((result) => {
-        //console.log(result);
-        var filteredResult = result.filter((x) => {
-            return (x.eventsEmitted);
-        }); 
-
-        console.log((result[0])['eventsEmitted']);
-        // result.forEach((x) => {
-        //     console.log('----------------------------------->');
-        //     console.log();
-        //     console.log();
-        // });
-        // console.log(result);
+        var temp = [];
+        result.forEach((x) => {
+            var item = x['eventsEmitted'][0];
+            temp.push(item);
+        });
+        temp = temp.filter((x)=>{
+            return x.userId = myUserId;
+        });
+        var sortTemp = _.sortBy(temp, function (x){
+            var tempTime = new moment(x.dateTime).format('YYYY-MM-DD HH:mm:ss');
+            return tempTime;
+        }).reverse();
         connection.disconnect();
-        return result;
+        return sortTemp;
     }).catch((e) => {
         connection.disconnect();
         return e.message;
@@ -56,9 +60,9 @@ function getMyHistorian() {
             console.log("Registries");
             console.log("==========");
             printRegistry(registries);
-            
-            registries.forEach((x)=>{
-              //  console.log(x.modelManager);
+
+            registries.forEach((x) => {
+                //  console.log(x.modelManager);
             });
             // 3. Get all the participant registries
             return connection.getAllParticipantRegistries(false);
@@ -77,8 +81,8 @@ function getMyHistorian() {
             return connection.getHistorian();
 
         }).then((registry) => {
-            console.log("Historian Registry: ", registry.registryType, "   ", registry.id, "   ",registry.toJSON());
-            (registry.getAll().then(function(his){
+            console.log("Historian Registry: ", registry.registryType, "   ", registry.id, "   ", registry.toJSON());
+            (registry.getAll().then(function (his) {
                 // console.log(his);
             }));
             // 6. Get the Identity Registry
