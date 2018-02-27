@@ -155,15 +155,19 @@ app.get('/transferPoint/:id/:cardId', (req,res)=>{
     console.log('userId: ',userId);
     console.log('cardId: ', cardId);
     card.getCardHistory(userId,cardId)
-    then((userCard) => {
+    .then((userCard) => {
 
         Company.find({}).then((c) => {
             var result = [];
             userCard.forEach(e => {
                 var com = c.find((x) => {
-                    return x.id == e.issuedCompany
+                    return x.id == e.fromCompany
                 });
-                e.detail = com;
+                e.fromComapnyDetail = com;
+                var toCom = c.find((x) => {
+                    return x.id == e.toCompany
+                });
+                e.toComapnyDetail = toCom;
                 result.push(e);
                 console.log('e : ', e);
             });
