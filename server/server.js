@@ -155,9 +155,21 @@ app.get('/transferPoint/:id/:cardId', (req,res)=>{
     console.log('userId: ',userId);
     console.log('cardId: ', cardId);
     card.getCardHistory(userId,cardId)
-    .then((x)=>{
-        // console.log(x);
-        res.send(x);
+    then((userCard) => {
+
+        Company.find({}).then((c) => {
+            var result = [];
+            userCard.forEach(e => {
+                var com = c.find((x) => {
+                    return x.id == e.issuedCompany
+                });
+                e.detail = com;
+                result.push(e);
+                console.log('e : ', e);
+            });
+            res.send(result);
+        });
+
     }).catch((e)=>{
         console.log(e);
         res.status(404).send(e);
