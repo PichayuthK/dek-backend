@@ -49,8 +49,8 @@ var addNewCard = function (newCard, error) {
         transaction.setPropertyValue('issuedCompany', newCard.issuedCompany);
         transaction.setPropertyValue('point', newCard.point);
         transaction.setPropertyValue('uuid', newCard.uuid);
-        
-        transaction.setPropertyValue('cardNumber',newCard.cardNumber);
+
+        transaction.setPropertyValue('cardNumber', newCard.cardNumber);
 
         return connection.submitTransaction(transaction).then(() => {
             console.log("Transaction Submitted/Processed Successfully!!")
@@ -140,8 +140,8 @@ var getAllCard = function (userId) {
     });
 }
 
-function getCardHistory(myUserId,oldCardId) {
-     return connection.connect(cardName).then(function () {
+function getCardHistory(myUserId, oldCardId) {
+    return connection.connect(cardName).then(function () {
         var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')"; // ORDER BY transactionTimestamp DESC";
         //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
         return connection.buildQuery(statement)
@@ -151,31 +151,32 @@ function getCardHistory(myUserId,oldCardId) {
         var temp = [];
         result.forEach((x) => {
             var item = x['eventsEmitted'][0];
-            console.log(x);
-            temp.push({
-                userId: item['userId'],
-                oldCardId: item['oldCardId'],
-                updateCardId: item['updateCardId'],
-                fromPoint: item['oldPoint'],
-                toPoint:item['updatePoint'],
-                dateTime: new moment(item['dateTime']).format('YYYY-MM-DD HH:mm:ss'),
-                fromCompany: item['fromCompany'],
-                toCompany:item['toCompany']
-            });
+            if (item) {
+                temp.push({
+                    userId: item['userId'],
+                    oldCardId: item['oldCardId'],
+                    updateCardId: item['updateCardId'],
+                    fromPoint: item['oldPoint'],
+                    toPoint: item['updatePoint'],
+                    dateTime: new moment(item['dateTime']).format('YYYY-MM-DD HH:mm:ss'),
+                    fromCompany: item['fromCompany'],
+                    toCompany: item['toCompany']
+                });
+            }
             // temp.push(item);
         });
         // console.log(temp);
-        temp = temp.filter((x)=>{
+        temp = temp.filter((x) => {
             // console.log(x);
             return x.userId == myUserId && x.oldCardId == oldCardId;
         });
-        var sortTemp = _.sortBy(temp, function (x){
+        var sortTemp = _.sortBy(temp, function (x) {
             var tempTime = new moment(x.dateTime).format('YYYY-MM-DD HH:mm:ss');
             return tempTime;
         }).reverse();
-        console.log(sortTemp);  
+        console.log(sortTemp);
         connection.disconnect();
-        
+
         // console.log(sortTemp);
         return sortTemp;
     }).catch((e) => {
