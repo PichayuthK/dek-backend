@@ -149,9 +149,10 @@ app.get('/partners/:fromVendorId', (req, res) => {
 
 });
 
-app.get('/transferPoint/:id', (req,res)=>{
+app.get('/transferPoint/:id/:cardId', (req,res)=>{
     var userId = req.params.id;
-    card.getCardHistory(userId)
+    var cardId = req.params.cardId
+    card.getCardHistory(userId,cardId)
     .then((x)=>{
         // console.log(x);
         res.send(x);

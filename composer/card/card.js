@@ -140,8 +140,8 @@ var getAllCard = function (userId) {
     });
 }
 
-function getCardHistory(myUserId) {
-    return connection.connect(cardName).then(function () {
+function getCardHistory(myUserId,oldCardId) {
+     return connection.connect(cardName).then(function () {
         var statement = "SELECT org.hyperledger.composer.system.HistorianRecord WHERE (transactionType == 'org.dek.network.TransferPoint')"; // ORDER BY transactionTimestamp DESC";
         //'resource:org.hyperledger.composer.system.AssetRegistry#org.dek.network.Card'
         return connection.buildQuery(statement)
@@ -151,16 +151,29 @@ function getCardHistory(myUserId) {
         var temp = [];
         result.forEach((x) => {
             var item = x['eventsEmitted'][0];
-            temp.push(item);
+            temp.push({
+                userId: item['userId'],
+                oldCardId: item['oldCardId'],
+                updateCardId: item['updateCardId'],
+                fromPoint: item['oldPoint'],
+                toPoint:item['updatePoint'],
+                dateTime: new moment(item['dateTime']).format('YYYY-MM-DD HH:mm:ss'),
+                fromCompany: item['fromCompany'],
+                toCompany:item['toCompany']
+            });
+            // temp.push(item);
         });
+        // console.log(temp);
         temp = temp.filter((x)=>{
-            return x.userId = myUserId;
+            return x.userId == myUserId && x.oldCardId == oldCardId;
         });
         var sortTemp = _.sortBy(temp, function (x){
             var tempTime = new moment(x.dateTime).format('YYYY-MM-DD HH:mm:ss');
             return tempTime;
         }).reverse();
+        console.log(sortTemp);  
         connection.disconnect();
+        
         // console.log(sortTemp);
         return sortTemp;
     }).catch((e) => {
