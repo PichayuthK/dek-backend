@@ -151,6 +151,7 @@ function getCardHistory(myUserId,oldCardId) {
         var temp = [];
         result.forEach((x) => {
             var item = x['eventsEmitted'][0];
+            console.log(x);
             temp.push({
                 userId: item['userId'],
                 oldCardId: item['oldCardId'],
@@ -165,7 +166,7 @@ function getCardHistory(myUserId,oldCardId) {
         });
         // console.log(temp);
         temp = temp.filter((x)=>{
-            console.log(x);
+            // console.log(x);
             return x.userId == myUserId && x.oldCardId == oldCardId;
         });
         var sortTemp = _.sortBy(temp, function (x){
