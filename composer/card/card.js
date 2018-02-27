@@ -165,6 +165,7 @@ function getCardHistory(myUserId,oldCardId) {
         });
         // console.log(temp);
         temp = temp.filter((x)=>{
+            console.log(x);
             return x.userId == myUserId && x.oldCardId == oldCardId;
         });
         var sortTemp = _.sortBy(temp, function (x){
