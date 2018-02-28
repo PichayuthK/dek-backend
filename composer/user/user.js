@@ -1,4 +1,3 @@
-
 const config = require('./../../config/config.js');
 const bnUtil = require('./../admin-connection');
 const uuid = require('uuid/v1');
@@ -22,45 +21,47 @@ var connection = new BusinessNetworkConnection({
 //     uuid: uuid()
 // });
 
-var addNewUser = function (newUser, error) {
+var addNewUser = function (newUser) {
     console.log('Invoke addNewUser function');
-    console.log(newUser);
-    if (error) {
-        console.log('--- error ----');
-        console.log(error);
-        process.exit(1);
-    }
 
-    console.log('b4 connect');
-    console.log(cardName);
-    return connection.connect(cardName).then(function () {
+    var temp = getUser(newUser.citizenId)
+        .then((x) => {
+            if(x != 99){
+                console.log(`check existing user: ${x}`)
+                return x.toString();
+            }
+            console.log('b4 connect');
+            console.log(cardName);
+            connection.connect(cardName).then(function () {
 
-        let bnDef = connection.getBusinessNetwork();
+                let bnDef = connection.getBusinessNetwork();
 
-        console.log("Received Definition from Runtime: ",
-            bnDef.getName(), "  ", bnDef.getVersion());
+                console.log("Received Definition from Runtime: ",
+                    bnDef.getName(), "  ", bnDef.getVersion());
 
-        let factory = bnDef.getFactory();
+                let factory = bnDef.getFactory();
 
-        let transaction = factory.newTransaction(namespace, transactionType);
+                let transaction = factory.newTransaction(namespace, transactionType);
 
-        transaction.setPropertyValue('lastName', newUser.lastName);
-        transaction.setPropertyValue('citizenId', newUser.citizenId);
-        transaction.setPropertyValue('firstName', newUser.firstName);
-        transaction.setPropertyValue('uuid', newUser.uuid);
+                transaction.setPropertyValue('lastName', newUser.lastName);
+                transaction.setPropertyValue('citizenId', newUser.citizenId);
+                transaction.setPropertyValue('firstName', newUser.firstName);
+                transaction.setPropertyValue('uuid', newUser.uuid);
 
-        return connection.submitTransaction(transaction).then(() => {
-            console.log("Transaction Submitted/Processed Successfully!!")
+                return connection.submitTransaction(transaction).then(() => {
+                    console.log("Transaction Submitted/Processed Successfully!!")
+
+                    connection.disconnect();
+
+                    return getUser(newUser.citizenId);
+                });
+            })
+        }).catch((error) => {
+            console.log(error);
 
             connection.disconnect();
-
-            return getUser(newUser.citizenId);
         });
-    }).catch((error) => {
-        console.log(error);
-
-        connection.disconnect();
-    });
+    return temp;
 }
 
 var getUser = function (citizenId) {
@@ -75,20 +76,24 @@ var getUser = function (citizenId) {
         // #4 Execute the query
     }).then((qry) => {
         console.log('execute query');
-        return connection.query(qry, {id: citizenId});
-    }).then((result)=> { 
+        return connection.query(qry, {
+            id: citizenId
+        });
+    }).then((result) => {
         console.log('Received user count:', result.length);
-        if (!result) {
-            throw new Error('User not found with citizenId: ', citizenId);
+        console.log(result);
+        if (result.length < 1) {
+            console.log('no user');
+            return 99;
         }
-        
+
         console.log(`result: ${result[0].userId}`);
-       // var serializer = connection.getSerializer();
-       // var userString = serializer.toJSON(result);
+        // var serializer = connection.getSerializer();
+        // var userString = serializer.toJSON(result);
 
         connection.disconnect();
         return result[0].userId;
-    }).catch((e)=>{
+    }).catch((e) => {
         connection.disconnect();
         return e.message;
     });

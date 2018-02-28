@@ -56,7 +56,10 @@ app.get('/users/:citizenid', (req, res) => {
         // var stringUser = Serializer.toJSON(u);
         console.log(`return user: ${u}`);
 
-        res.send(u);
+        res.send(u.toString());
+    }).catch((e) => {
+        console.log('e :', e);
+        res.status(404).send();
     });
 });
 
@@ -149,35 +152,35 @@ app.get('/partners/:fromVendorId', (req, res) => {
 
 });
 
-app.get('/transferPoint/:id/:cardId', (req,res)=>{
+app.get('/transferPoint/:id/:cardId', (req, res) => {
     var userId = req.params.id;
     var cardId = req.params.cardId
-    console.log('userId: ',userId);
+    console.log('userId: ', userId);
     console.log('cardId: ', cardId);
-    card.getCardHistory(userId,cardId)
-    .then((userCard) => {
+    card.getCardHistory(userId, cardId)
+        .then((userCard) => {
 
-        Company.find({}).then((c) => {
-            var result = [];
-            userCard.forEach(e => {
-                var com = c.find((x) => {
-                    return x.id == e.fromCompany
+            Company.find({}).then((c) => {
+                var result = [];
+                userCard.forEach(e => {
+                    var com = c.find((x) => {
+                        return x.id == e.fromCompany
+                    });
+                    e.fromComapnyDetail = com;
+                    var toCom = c.find((x) => {
+                        return x.id == e.toCompany
+                    });
+                    e.toComapnyDetail = toCom;
+                    result.push(e);
+                    console.log('e : ', e);
                 });
-                e.fromComapnyDetail = com;
-                var toCom = c.find((x) => {
-                    return x.id == e.toCompany
-                });
-                e.toComapnyDetail = toCom;
-                result.push(e);
-                console.log('e : ', e);
+                res.send(result);
             });
-            res.send(result);
-        });
 
-    }).catch((e)=>{
-        console.log(e);
-        res.status(404).send(e);
-    });
+        }).catch((e) => {
+            console.log(e);
+            res.status(404).send(e);
+        });
 });
 
 app.get('/partners/:fromVendorId/:toVendorId/:userId', (req, res) => {
@@ -247,27 +250,61 @@ app.post('/users', (req, res) => {
         username: req.body.username,
         password: req.body.password,
         citizenId: req.body.citizenid,
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
+        firstName: req.body.firstname,
+        lastName: req.body.lastname,
         phoneNumber: req.body.phoneNumber
     });
     console.log(`${newUser}`);
-    newUser.save().then((user) => {
-        userHyperledger.addNewUser({
-            citizenId: req.body.citizenid,
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
-            uuid: uuid()
-        }).then((u) => {
+    User.find({
+            citizenId: (req.body.citizenid).toString()
+        })
+        .then((u) => {
+            console.log('u1: ',u);
+            if (u != null && u.length > 0) {
+                console.log('user: ', u);
+                return res.send(u[0]);
+            }
+            return u;
+        })
+        .then((u) => {
+            if (u.length < 1) {
+                return newUser.save().then((user) => {
+                    console.log('end userHyperledger');
+                    return userHyperledger.addNewUser({
+                        citizenId: req.body.citizenid,
+                        firstName: req.body.firstname,
+                        lastName: req.body.lastname,
+                        uuid: uuid()
+                    });
+                })
+            }
+        })
+        .then((u) => {
             console.log(`u: ${u}`);
-            res.send(u);
-        }).catch((e) => {
-            console.log('Error');
-            res.send(e.message).status(404);
+            res.send(newUser);
+        })
+        .catch((e) => {
+            res.status(404).send();
         });
-    }, (e) => {
-        res.status(404).send(e);
-    });
+
+    // newUser.save().then((user) => {
+    //     userHyperledger.addNewUser({
+    //         citizenId: req.body.citizenid,
+    //         firstName: req.body.firstname,
+    //         lastName: req.body.lastname,
+    //         uuid: uuid()
+    //     }).then((u) => {
+    //         console.log(`u: ${u}`);
+    //        // res.send(u);
+    //     }).catch((e) => {
+    //         console.log('Error');
+    //         res.send(e.message).status(404);
+    //     });
+    // })
+    // .catch((e)=>{
+    //     console.log(e);
+    //     res.status(404).send();
+    // });
 });
 
 app.post('/users/login', (req, res) => {
@@ -333,7 +370,7 @@ app.post('/transferPoint', (req, res) => {
         .then((c) => {
             console.log(c);
             res.send(c);
-        }).catch( (e)=>{
+        }).catch((e) => {
             res.status(404).send();
         });
     res.status(404).send();
