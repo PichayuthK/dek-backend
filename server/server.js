@@ -261,8 +261,14 @@ app.post('/users', (req, res) => {
         .then((u) => {
             console.log('u1: ',u);
             if (u != null && u.length > 0) {
-                console.log('user: ', u);
-                return res.send(u[0]);
+                return userHyperledger.addNewUser({
+                    citizenId: req.body.citizenid,
+                    firstName: req.body.firstname,
+                    lastName: req.body.lastname,
+                    uuid: uuid()
+                }).then((x)=>{
+                    return res.send(u);
+                });                
             }
             return u;
         })
@@ -382,7 +388,6 @@ app.post('/vendors', (req, res) => {
     var company = new Company({
         name: req.body.name,
         img: req.body.img,
-        id: uuid(),
         termAndCondition: req.body.termAndCondition
     });
     console.log('company: ', company);

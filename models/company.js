@@ -15,9 +15,6 @@ var companySchema = new mongoose.Schema({
     termAndCondition:{
         type: String,
         trim:true
-    },
-    id:{
-        type: String
     }
 });
 
