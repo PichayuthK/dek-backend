@@ -159,7 +159,36 @@ app.get('/transferPoint/:id/:cardId', (req, res) => {
     console.log('cardId: ', cardId);
     card.getCardHistory(userId, cardId)
         .then((userCard) => {
+            Company.find({}).then((c) => {
+                var result = [];
+                userCard.forEach(e => {
+                    var com = c.find((x) => {
+                        return x.id == e.fromCompany
+                    });
+                    e.fromComapnyDetail = com;
+                    var toCom = c.find((x) => {
+                        return x.id == e.toCompany
+                    });
+                    e.toComapnyDetail = toCom;
+                    result.push(e);
+                    console.log('e : ', e);
+                });
+                res.send(result);
+            });
 
+        }).catch((e) => {
+            console.log(e);
+            res.status(404).send(e);
+        });
+});
+
+app.get('/transferPoint/:id', (req, res) => {
+    var userId = req.params.id;
+
+    console.log('userId: ', userId);
+
+    card.getAllCardHistory(userId)
+        .then((userCard) => {
             Company.find({}).then((c) => {
                 var result = [];
                 userCard.forEach(e => {
@@ -368,8 +397,7 @@ app.post('/transferPoint', (req, res) => {
         toCardId: req.body.toCardId,
         fromPoint: req.body.fromPoint,
         toPoint: req.body.toPoint,
-        userId: req.body.userId,
-        toCompany: req.body.toCompany
+        userId: req.body.userId
     };
     console.log(myPoint);
     point.transferPoint(myPoint)
@@ -379,7 +407,7 @@ app.post('/transferPoint', (req, res) => {
         }).catch((e) => {
             res.status(404).send();
         });
-    res.status(404).send();
+
 });
 
 app.post('/vendors', (req, res) => {
