@@ -14,6 +14,12 @@ var partnerSchema =  new mongoose.Schema({
     },
     toRate:{
         type: Number
+    },
+    minimum:{
+        type:Number
+    },
+    maximum:{
+        type:Number
     }
     
 });

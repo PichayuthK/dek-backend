@@ -364,7 +364,9 @@ app.post('/partners', (req, res) => {
         fromVendorId: mongoose.Types.ObjectId(req.body.fromVendorId),
         toVendorId: mongoose.Types.ObjectId(req.body.toVendorId),
         fromRate: req.body.fromRate,
-        toRate: req.body.toRate
+        toRate: req.body.toRate,
+        minimum: req.body.minimum,
+        maximum: req.body.maximum
     });
     newPartner.save().then((partner) => {
         res.send(partner);
