@@ -366,7 +366,8 @@ app.post('/partners', (req, res) => {
         fromRate: req.body.fromRate,
         toRate: req.body.toRate,
         minimum: req.body.minimum,
-        maximum: req.body.maximum
+        maximum: req.body.maximum,
+        perRound:req.body.perRound
     });
     newPartner.save().then((partner) => {
         res.send(partner);

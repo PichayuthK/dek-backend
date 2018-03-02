@@ -20,6 +20,9 @@ var partnerSchema =  new mongoose.Schema({
     },
     maximum:{
         type:Number
+    },
+    perRound:{
+        type:Number
     }
     
 });
